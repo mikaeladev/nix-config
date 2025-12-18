@@ -1,9 +1,9 @@
 { pkgs, ... }:
 
 {
-  plasma.enable = true;
-
   environment = {
+    desktop = "plasma";
+    
     localBinInPath = true;
 
     systemPackages = [
