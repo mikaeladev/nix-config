@@ -1,11 +1,10 @@
-{ config, globals, lib, pkgs, ... }:
+{ config, globals, pkgs, ... }:
 
 let
-  inherit (lib) mkIf;
   inherit (pkgs) writeShellScriptBin;
 
   inherit (config.xdg) cacheHome configHome dataHome stateHome;
-  
+
   userHome = config.home.homeDirectory;
   steamHome = "${stateHome}/steam-home";
 
@@ -28,8 +27,8 @@ in
     (writeShellScriptBin "restart-plasma" ''
       systemctl --user restart plasma-plasmashell
     '')
-
-    (mkIf (!globals.standalone) (writeShellScriptBin "steam" ''
+  ] ++ (if globals.standalone then [(
+    writeShellScriptBin "steam" ''
       maybeSymlink() {
         if [ ! -e "$1" ]; then
           echo "Symlink target '$1' does not exist"
@@ -59,6 +58,6 @@ in
       # set new home value
       export HOME="${steamHome}"
       exec "/usr/bin/steam" "$@"
-    ''))
-  ];
+    ''
+  )] else []);
 }
