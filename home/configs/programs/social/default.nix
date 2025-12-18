@@ -1,0 +1,8 @@
+{ ... }:
+
+{
+  imports = [
+    ./vesktop
+    ./zapzap.nix
+  ];
+}

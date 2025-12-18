@@ -1,0 +1,16 @@
+/* pinned dms fixes */
+
+.vc-pindms-section-container {
+  color: var(--channels-default) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: initial !important;
+
+  :hover {
+    color: var(--interactive-hover) !important;
+  }
+}
+
+.privateChannelsHeaderContainer__99e7c {
+  margin-top: var(--space-12);
+}
