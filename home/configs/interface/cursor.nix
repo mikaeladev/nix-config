@@ -1,10 +1,6 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
-let
-  cfg = config.home.pointerCursor;
-in
-
-{
+rec {
   home.pointerCursor = {
     enable = true;
     gtk.enable = true;
@@ -15,6 +11,6 @@ in
     size = 24;
   };
 
-  xdg.dataFile."./icons/${cfg.name}".source =
-    "${config.home.profileDirectory}/share/icons/${cfg.name}";
+  xdg.dataFile."./icons/${home.pointerCursor.name}".source =
+    "${pkgs.pixel-cursors}/share/icons/${home.pointerCursor.name}";
 }
