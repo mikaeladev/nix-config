@@ -1,4 +1,4 @@
-{ globals, inputs, lib, ... }:
+{ inputs, ... }:
 
 {
   imports = [ inputs.flatpaks.homeManagerModules.nix-flatpak ];
@@ -13,8 +13,6 @@
 
     packages = [
       "eu.betterbird.Betterbird"
-    ] ++ lib.optionals globals.standalone [
-      "com.vysp3r.ProtonPlus"
     ];
   };
 }
