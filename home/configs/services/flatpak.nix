@@ -12,7 +12,6 @@
     };
 
     packages = [
-      "app.zen_browser.zen"
       "eu.betterbird.Betterbird"
     ] ++ lib.optionals globals.standalone [
       "com.vysp3r.ProtonPlus"

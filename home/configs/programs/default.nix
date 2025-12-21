@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./browsers
     ./editors
     ./games
     ./music

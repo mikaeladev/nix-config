@@ -51,6 +51,12 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake/beta";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs =
@@ -81,7 +87,7 @@
         mainuser = {
           username = "mainuser";
           nickname = "mikaela";
-          
+
           xdg = {
             cacheHome = "/home/${mainuser.username}/.local/var/cache";
             configHome = "/home/${mainuser.username}/.local/etc";
