@@ -1,9 +1,11 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./desktops/plasma.nix
+  ];
+
   environment = {
-    desktop = "plasma";
-    
     localBinInPath = true;
 
     systemPackages = [

@@ -5,16 +5,16 @@ let
 in
 
 {
-  programs.zsh.enable = true;
-  environment.etc.zshenv.text = ''
-    if [ "$HOME" == "/home/${globals.mainuser.username}" ]; then
+  programs.zsh = {
+    enable = true;
+    shellInit = ''
       export ZDOTDIR="${globals.mainuser.xdg.configHome}/zsh"
-    fi
-  '';
+    '';
+  };
 
   users.users.${mainuser.username} = {
     description = mainuser.nickname;
-    shell = mainuser.shell;
+    shell = pkgs.zsh;
     isNormalUser = true;
     initialPassword = "changeme";
     extraGroups = [
@@ -27,7 +27,7 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    users.${mainuser.username} = import ../home;
+    users.${mainuser.username} = import ../../home;
     extraSpecialArgs = {
       inherit globals inputs pkgs;
     };

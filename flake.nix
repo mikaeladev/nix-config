@@ -73,7 +73,9 @@
 
       pkgs = import nixpkgs {
         inherit system;
-        config = {};
+        config = {
+          allowUnfree = true;
+        };
         overlays = [
           mac-style-plymouth.overlays.default
           nvibrant.overlays.default
@@ -105,7 +107,12 @@
       nixosConfigurations.desktop = mkSystem {
         inherit pkgs;
         modules = [ ./nixos ];
-        specialArgs = { inherit globals inputs; };
+        specialArgs = {
+          inherit inputs;
+          globals = globals // {
+            standalone = false;
+          };
+        };
       };
 
       homeConfigurations.mainuser = mkHome {

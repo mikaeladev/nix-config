@@ -10,7 +10,6 @@ in
     home-manager.nixosModules.default
     ./hardware.nix
     ./configs
-    ./modules
   ];
 
   nix.settings = {
