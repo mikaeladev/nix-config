@@ -7,7 +7,7 @@
 }:
 
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf optionals;
 in
 
 {
@@ -17,14 +17,15 @@ in
     ./modules
   ];
 
-  # home manager config
   home = {
     username = globals.mainuser.username;
     homeDirectory = "/home/${globals.mainuser.username}";
+
     preferXdgDirectories = true;
     shell.enableZshIntegration = true;
 
-    sessionPath = mkIf globals.standalone [
+    # this is set on nixos with `environment.localBinInPath`
+    sessionPath = optionals globals.standalone [
       "${config.home.homeDirectory}/.local/bin"
     ];
 
@@ -33,18 +34,13 @@ in
 
   news.display = "silent"; # SHUTUP
 
-  # enable nixGL wrappers
-  targets.genericLinux.nixGL = {
+  programs.home-manager.enable = true;
+  programs.plasma.enable = true;
+
+  targets.genericLinux.nixGL = mkIf globals.standalone {
     packages = inputs.nixGL.packages;
     defaultWrapper = "nvidia";
     installScripts = [ "nvidia" ];
     vulkan.enable = true;
   };
-
-  # allow proprietary software
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.nvidia.acceptLicense = true;
-
-  programs.home-manager.enable = true;
-  programs.plasma.enable = true;
 }

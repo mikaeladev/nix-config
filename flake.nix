@@ -61,6 +61,7 @@
 
   outputs =
     inputs@{
+      self,
       nixpkgs,
       home-manager,
       mac-style-plymouth,
@@ -73,13 +74,16 @@
 
       pkgs = import nixpkgs {
         inherit system;
+
         config = {
           allowUnfree = true;
+          nvidia.acceptLicense = true;
         };
+
         overlays = [
           mac-style-plymouth.overlays.default
           nvibrant.overlays.default
-          (import ./pkgs { inherit inputs system; })
+          self.overlays.default
         ];
       };
 
@@ -104,6 +108,8 @@
     in
 
     {
+      overlays.default = import ./pkgs { inherit inputs system; };
+
       nixosConfigurations.desktop = mkSystem {
         inherit pkgs;
         modules = [ ./nixos ];

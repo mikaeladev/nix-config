@@ -1,13 +1,9 @@
 { inputs, ... }:
 
-let
-  inherit (inputs) agenix home-manager;
-in
-
 {
   imports = [
-    agenix.nixosModules.default
-    home-manager.nixosModules.default
+    inputs.agenix.nixosModules.default
+    inputs.home-manager.nixosModules.default
     ./hardware.nix
     ./configs
   ];

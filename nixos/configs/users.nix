@@ -8,7 +8,7 @@ in
   programs.zsh = {
     enable = true;
     shellInit = ''
-      export ZDOTDIR="${globals.mainuser.xdg.configHome}/zsh"
+      export ZDOTDIR="${mainuser.xdg.configHome}/zsh"
     '';
   };
 
@@ -24,12 +24,10 @@ in
   };
 
   home-manager = {
-    useGlobalPkgs = true;
+    useGlobalPkgs = false;
     useUserPackages = true;
     backupFileExtension = "backup";
     users.${mainuser.username} = import ../../home;
-    extraSpecialArgs = {
-      inherit globals inputs pkgs;
-    };
+    extraSpecialArgs = { inherit globals inputs pkgs; };
   };
 }
