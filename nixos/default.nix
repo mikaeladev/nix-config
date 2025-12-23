@@ -7,6 +7,10 @@
     ./hardware.nix
     ./configs
   ];
+  
+  age.secrets = {
+    networks.file = ../secrets/networks.age;
+  };
 
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];

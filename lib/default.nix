@@ -1,6 +1,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./networking.nix
+  ];
+
   patchDesktopFileExec = (
     beforeValue: afterValue: filePath:
 

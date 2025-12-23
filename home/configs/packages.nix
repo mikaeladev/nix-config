@@ -6,6 +6,7 @@ in
 
 {
   home.packages = with pkgs; ([
+    agenix
     bun
     nodejs
     pnpm

@@ -88,7 +88,10 @@
       };
 
       globals = rec {
-        lib = import ./lib { inherit inputs pkgs system; };
+        lib = import ./lib {
+          inherit inputs pkgs system;
+          globals = { inherit mainuser; };
+        };
 
         mainuser = {
           username = "mainuser";
