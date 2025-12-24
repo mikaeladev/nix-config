@@ -12,4 +12,6 @@ in
 
 {
   "networks.age".publicKeys = users ++ systems;
+  "passwords/root.age".publicKeys = users ++ systems;
+  "passwords/mainuser.age".publicKeys = users ++ systems;
 }

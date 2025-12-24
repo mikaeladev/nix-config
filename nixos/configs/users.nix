@@ -1,26 +1,48 @@
-{ globals, inputs, pkgs, ... }:
+{
+  config,
+  globals,
+  inputs,
+  pkgs,
+  ...
+}:
 
 let
   inherit (globals) mainuser;
+  inherit (config.age) secrets;
+
+  extraGroups = [
+    "networkmanager"
+    "wheel"
+  ];
 in
 
 {
   programs.zsh = {
     enable = true;
     shellInit = ''
-      export ZDOTDIR="${mainuser.xdg.configHome}/zsh"
+      if [ "$HOME" == "/home/${mainuser.username}" ]; then
+        export ZDOTDIR="${mainuser.xdg.configHome}/zsh"
+      fi
     '';
   };
 
-  users.users.${mainuser.username} = {
-    description = mainuser.nickname;
-    shell = pkgs.zsh;
-    isNormalUser = true;
-    initialPassword = "changeme";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
+  users.users = {
+    root = {
+      hashedPasswordFile = secrets."passwords/root".path;
+      isSystemUser = true;
+      shell = pkgs.zsh;
+      uid = 0;
+    };
+
+    "${mainuser.username}" = {
+      inherit extraGroups;
+
+      description = mainuser.nickname;
+      hashedPasswordFile = secrets."passwords/mainuser".path;
+      isNormalUser = true;
+      shell = pkgs.zsh;
+      uid = 1000;
+    };
   };
 
   home-manager = {
