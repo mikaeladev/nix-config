@@ -3,14 +3,7 @@
 {
   programs.xwayland.enable = true;
 
-  services = {
-    desktopManager.plasma6.enable = true;
-
-    displayManager.sddm = {
-      enable = true;
-      wayland.enable = true;
-    };
-  };
+  services.desktopManager.plasma6.enable = true;
 
   xdg.portal = {
     enable = true;
