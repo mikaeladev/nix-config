@@ -20,7 +20,7 @@ in
   programs.zsh = {
     enable = true;
     shellInit = ''
-      if [ "$HOME" == "/home/${mainuser.username}" ]; then
+      if [ "$HOME" = "/home/${mainuser.username}" ]; then
         export ZDOTDIR="${mainuser.xdg.configHome}/zsh"
       fi
     '';
