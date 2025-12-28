@@ -21,11 +21,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mac-style-plymouth = {
-      url = "github:SergioRibera/s4rchiso-plymouth-theme";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nixGL = {
       url = "github:nix-community/nixGL/pull/187/head";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -64,7 +59,6 @@
       self,
       nixpkgs,
       home-manager,
-      mac-style-plymouth,
       nvibrant,
       ...
     }:
@@ -81,7 +75,6 @@
         };
 
         overlays = [
-          mac-style-plymouth.overlays.default
           nvibrant.overlays.default
           self.overlays.default
         ];

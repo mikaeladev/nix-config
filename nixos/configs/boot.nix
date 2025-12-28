@@ -22,13 +22,6 @@
       useTmpfs = true;
       tmpfsSize = "30%";
     };
-
-    # enable splash screen
-    plymouth = {
-      enable = true;
-      theme = "mac-style";
-      themePackages = [ pkgs.mac-style-plymouth ];
-    };
   };
 
   services.displayManager.ly = {
