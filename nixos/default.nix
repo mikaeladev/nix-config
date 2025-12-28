@@ -10,8 +10,8 @@
 
   age.secrets = {
     "networks".file = ../secrets/networks.age;
-    "passwords/root".file = ../passwords/root.age;
-    "passwords/mainuser".file = ../passwords/mainuser.age;
+    "passwords/root".file = ../secrets/passwords/root.age;
+    "passwords/mainuser".file = ../secrets/passwords/mainuser.age;
   };
 
   nix.settings = {
