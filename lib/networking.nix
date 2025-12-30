@@ -86,7 +86,8 @@ in
     connection = {
       inherit uuid autoconnect;
       id = name;
-      permissions = "user:${globals.mainuser.username}:";
+      type = "wireguard";
+      permissions = "user:${globals.mainuser.username}:;";
     };
 
     ipv4 = {
@@ -108,7 +109,7 @@ in
       mtu = 1280;
     };
 
-    wireguard-peer."${publicKey}" = {
+    "wireguard-peer.${publicKey}" = {
       inherit endpoint;
       persistent-keepalive = 30;
       allowed-ips = "0.0.0.0/0;";
