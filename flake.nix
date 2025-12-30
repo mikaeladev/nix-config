@@ -58,6 +58,7 @@
     inputs@{
       self,
       nixpkgs,
+      agenix,
       home-manager,
       nvibrant,
       ...
@@ -75,17 +76,13 @@
         };
 
         overlays = [
+          agenix.overlays.default
           nvibrant.overlays.default
           self.overlays.default
         ];
       };
 
       globals = rec {
-        lib = import ./lib {
-          inherit inputs pkgs system;
-          globals = { inherit mainuser; };
-        };
-
         mainuser = {
           username = "mainuser";
           nickname = "mikaela";
@@ -99,15 +96,21 @@
         };
       };
 
-      mkSystem = nixpkgs.lib.nixosSystem;
+      libArgs = { inherit globals pkgs; };
+
+      nixosLib = import ./nixos/modules/lib/extend-lib.nix libArgs;
+      homeLib = import ./home/modules/lib/extend-lib.nix libArgs;
+
+      mkNixos = nixpkgs.lib.nixosSystem;
       mkHome = home-manager.lib.homeManagerConfiguration;
     in
 
     {
       overlays.default = import ./pkgs { inherit inputs system; };
 
-      nixosConfigurations.desktop = mkSystem {
+      nixosConfigurations.desktop = mkNixos {
         inherit pkgs;
+        lib = nixosLib;
         modules = [ ./nixos ];
         specialArgs = {
           inherit inputs;
@@ -119,6 +122,7 @@
 
       homeConfigurations.mainuser = mkHome {
         inherit pkgs;
+        lib = homeLib;
         modules = [ ./home ];
         extraSpecialArgs = {
           inherit inputs;

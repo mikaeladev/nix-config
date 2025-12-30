@@ -10,6 +10,7 @@ let
 
   cfg = config.programs.prism-launcher;
 in
+
 {
   options.programs.prism-launcher = {
     enable = mkEnableOption "Enable Prism Launcher";

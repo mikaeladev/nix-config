@@ -1,12 +1,13 @@
 {
   config,
   globals,
+  lib,
   pkgs,
   ...
 }:
 
 let
-  inherit (globals.lib) patchDesktopFileExec;
+  inherit (lib.custom.files) updateDesktopFileValue;
 in
 
 {
@@ -87,7 +88,10 @@ in
   };
 
   xdg.autostart.entries = [
-    (patchDesktopFileExec "vesktop" "${config.home.profileDirectory}/bin/vesktop"
-      "${pkgs.vesktop}/share/applications/vesktop.desktop")
+    (updateDesktopFileValue {
+      key = "Exec";
+      value = "${config.home.profileDirectory}/bin/vesktop";
+      source = "${pkgs.vesktop}/share/applications/vesktop.desktop";
+    })
   ];
 }

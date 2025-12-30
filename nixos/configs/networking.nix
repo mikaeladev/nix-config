@@ -1,7 +1,7 @@
-{ config, globals, ... }:
+{ config, lib, ... }:
 
 let
-  inherit (globals.lib)
+  inherit (lib.custom.networking)
     mkEthernetConfig
     mkWifiConfig
     mkSurfsharkConfig

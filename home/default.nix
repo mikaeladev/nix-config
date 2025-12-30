@@ -14,7 +14,7 @@ in
   imports = [
     inputs.plasma-manager.homeModules.plasma-manager
     ./configs
-    ./modules
+    ./modules/programs
   ];
 
   home = {

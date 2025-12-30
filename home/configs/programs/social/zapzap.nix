@@ -1,12 +1,13 @@
 {
   config,
   globals,
+  lib,
   pkgs,
   ...
 }:
 
 let
-  inherit (globals.lib) patchDesktopFileExec;
+  inherit (lib.custom.files) updateDesktopFileValue;
 in
 
 {
@@ -40,7 +41,10 @@ in
   };
 
   xdg.autostart.entries = [
-    (patchDesktopFileExec "zapzap" "${config.home.profileDirectory}/bin/zapzap"
-      "${pkgs.zapzap}/share/applications/com.rtosta.zapzap.desktop")
+    (updateDesktopFileValue {
+      key = "Exec";
+      value = "${config.home.profileDirectory}/bin/zapzap";
+      source = "${pkgs.zapzap}/share/applications/com.rtosta.zapzap.desktop";
+    })
   ];
 }

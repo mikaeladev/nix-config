@@ -10,6 +10,7 @@ let
 
   cfg = config.programs.deadlock-mod-manager;
 in
+
 {
   options.programs.deadlock-mod-manager = {
     enable = mkEnableOption "Enable Deadlock Mod Manager";
