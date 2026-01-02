@@ -1,5 +1,8 @@
-args:
+{ ... }:
 
 {
-  files = import ./files.nix args;
+  imports = [
+    ./files.nix
+    ./wrappers.nix
+  ];
 }

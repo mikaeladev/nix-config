@@ -1,14 +1,14 @@
-{ config, globals, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  inherit (config.lib.custom) wrapGraphics;
+in
+
 
 {
   programs.kitty = {
     enable = true;
-
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.kitty)
-      else pkgs.kitty
-    );
+    package = wrapGraphics pkgs.kitty;
 
     themeFile = "kanagawabones";
 

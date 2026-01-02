@@ -1,13 +1,12 @@
-{ config, globals, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  inherit (config.lib.custom) wrapGraphics;
+in
 
 {
   programs.obs-studio = {
     enable = true;
-
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.obs-studio)
-      else pkgs.obs-studio
-    );
+    package = wrapGraphics pkgs.obs-studio;
   };
 }

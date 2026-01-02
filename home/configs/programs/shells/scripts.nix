@@ -2,64 +2,34 @@
 
 let
   inherit (lib) optionals;
-  inherit (pkgs) writeShellScriptBin;
 
-  inherit (config.xdg) cacheHome configHome dataHome stateHome;
+  inherit (config.xdg) configHome stateHome;
+  inherit (config.lib.custom) wrapHome wrapPackage wrapStandaloneBin;
 
-  userHome = config.home.homeDirectory;
   steamHome = "${stateHome}/steam-home";
-
-  # makes launching from context menus possible
-  asepriteWrapper = writeShellScriptBin "aseprite" ''
-    export HOME="${steamHome}"
-    exec "${userHome}/storage/steam/steamapps/common/Aseprite/aseprite" "$@"
-  '';
-
-  # makes nvidia-settings save to XDG_CONFIG_HOME
-  nvidiaSettingsWrapper = writeShellScriptBin "nvidia-settings" ''
-    exec "/usr/bin/nvidia-settings" --config="${configHome}/nvidia/settings"
-  '';
-
-  # gives steam its own home to be messy in >:(
-  steamWrapper = writeShellScriptBin "steam" ''
-    maybeSymlink() {
-      if [ ! -e "$1" ]; then
-        echo "Symlink target '$1' does not exist"
-        exit 1
-      elif [ ! -h "$2" ]; then
-        echo "Creating symlink at '$2'"
-        mkdir -p "$(dirname "$2")"
-        ln -s "$1" "$2"
-      elif [ ! "$1" = "$(readlink -f "$2")" ]; then
-        echo "Updating symlink target at '$2'"
-        ln -sf "$1" "$2"
-      fi
-    }
-
-    # make steam home if it doesn't exist
-    if [ ! -d "${steamHome}" ]; then
-      echo "Setting up steam home in '${steamHome}'"
-      mkdir -p "${steamHome}"
-    fi
-
-    # symlink xdg base dirs
-    maybeSymlink "${cacheHome}" "${steamHome}/.cache"
-    maybeSymlink "${configHome}" "${steamHome}/.config"
-    maybeSymlink "${dataHome}" "${steamHome}/.local/share"
-    maybeSymlink "${stateHome}" "${steamHome}/.local/state"
-
-    # set new home value
-    export HOME="${steamHome}"
-    exec "/usr/bin/steam" "$@"
-  '';
+  steamApps = "${config.home.homeDirectory}/storage/steam/steamapps";
 in
 
 {
   home.packages = [
-    asepriteWrapper
+    (wrapHome {
+      newHome = steamHome;
+      package = wrapStandaloneBin "${steamApps}/common/Aseprite/aseprite";
+    })
+
+    (wrapHome {
+      newHome = steamHome;
+      package = (
+        if globals.standalone
+        then wrapStandaloneBin "/usr/bin/steam"
+        else pkgs.steam
+      );
+    })
   ] ++ optionals globals.standalone [
-    nvidiaSettingsWrapper
-    steamWrapper
+    (wrapPackage {
+      flags."--config" = "${configHome}/nvidia/settings";
+      package = wrapStandaloneBin "/usr/bin/nvidia-settings";
+    })
   ];
 
   home.shellAliases = {

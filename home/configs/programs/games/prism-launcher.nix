@@ -1,13 +1,12 @@
-{ config, globals, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  inherit (config.lib.custom) wrapGraphics;
+in
 
 {
   programs.prism-launcher = {
     enable = true;
-
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.prismlauncher)
-      else pkgs.prismlauncher
-    );
+    package = wrapGraphics pkgs.prismlauncher;
   };
 }

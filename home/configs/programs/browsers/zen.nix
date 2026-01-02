@@ -1,7 +1,15 @@
-{ config, globals, inputs, pkgs, ... }:
+{ config, inputs, pkgs, ... }:
 
 let
-  profilesDir = "${config.home.homeDirectory}/storage/zen/profiles";
+  inherit (config.lib.custom)
+    wrapGraphics
+    wrapHome
+    ;
+in
+
+let
+  zenHome = "${config.xdg.stateHome}/zen-home";
+  zenProfiles = "${config.home.homeDirectory}/storage/zen/profiles";
   zenPackage = inputs.zen-browser.packages.${pkgs.stdenv.system}.beta;
 in
 
@@ -13,26 +21,25 @@ in
   programs.zen-browser = {
     enable = true;
 
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap zenPackage)
-      else zenPackage
-    );
+    package = wrapHome {
+      package = wrapGraphics zenPackage;
+      newHome = zenHome;
+    };
 
     profiles = {};
   };
 
   home.file = {
-    ".zen/profiles.ini".text = ''
+    "${zenHome}/.zen/profiles.ini".text = ''
       [Profile1]
       IsRelative=0
       Name=private
-      Path=${profilesDir}/private
+      Path=${zenProfiles}/private
 
       [Profile0]
       IsRelative=0
       Name=home
-      Path=${profilesDir}/home
+      Path=${zenProfiles}/home
       Default=1
 
       [General]
@@ -40,13 +47,13 @@ in
       Version=2
 
       [Install0]
-      Default=${profilesDir}/home
+      Default=${zenProfiles}/home
       Locked=1
     '';
 
-    ".zen/installs.ini".text = ''
+    "${zenHome}/.zen/installs.ini".text = ''
       [0]
-      Default=${profilesDir}/home
+      Default=${zenProfiles}/home
       Locked=1
     '';
   };

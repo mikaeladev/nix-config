@@ -1,15 +1,14 @@
-{ config, globals, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  inherit (config.lib.custom) wrapGraphics;
+in
+
 
 {
   services.easyeffects = {
     enable = true;
-
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.easyeffects)
-      else pkgs.easyeffects
-    );
-
+    package = wrapGraphics pkgs.easyeffects;
     preset = "perfect eq + bass boost";
   };
 

@@ -46,6 +46,11 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    wrappers = {
+      url = "github:Lassulus/wrappers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake/beta";
@@ -95,11 +100,10 @@
           };
         };
       };
-
-      libArgs = { inherit globals pkgs; };
-
-      nixosLib = import ./nixos/modules/lib/extend-lib.nix libArgs;
-      homeLib = import ./home/modules/lib/extend-lib.nix libArgs;
+      
+      nixosLib = import ./nixos/modules/lib/extend-lib.nix {
+        inherit globals inputs pkgs;
+      };
 
       mkNixos = nixpkgs.lib.nixosSystem;
       mkHome = home-manager.lib.homeManagerConfiguration;
@@ -122,7 +126,6 @@
 
       homeConfigurations.mainuser = mkHome {
         inherit pkgs;
-        lib = homeLib;
         modules = [ ./home ];
         extraSpecialArgs = {
           inherit inputs;

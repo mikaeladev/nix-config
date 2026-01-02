@@ -1,24 +1,16 @@
-{
-  config,
-  globals,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, pkgs, ... }:
 
 let
-  inherit (lib.custom.files) updateDesktopFileValue;
+  inherit (config.lib.custom)
+    updateDesktopFileValue
+    wrapGraphics
+    ;
 in
 
 {
   programs.vesktop = {
     enable = true;
-
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.vesktop)
-      else pkgs.vesktop
-    );
+    package = wrapGraphics pkgs.vesktop;
 
     settings = {
       discordBranch = "stable";

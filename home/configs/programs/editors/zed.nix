@@ -1,14 +1,13 @@
-{ config, globals, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  inherit (config.lib.custom) wrapGraphics;
+in
 
 {
   programs.zed-editor = {
     enable = true;
-    
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.zed-editor)
-      else pkgs.zed-editor
-    );
+    package = wrapGraphics pkgs.zed-editor;
     
     extraPackages = [
       pkgs.nil

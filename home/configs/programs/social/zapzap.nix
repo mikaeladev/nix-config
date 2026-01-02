@@ -1,24 +1,17 @@
-{
-  config,
-  globals,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, pkgs, ... }:
 
 let
-  inherit (lib.custom.files) updateDesktopFileValue;
+  inherit (config.lib.custom)
+    updateDesktopFileValue
+    wrapGraphics
+    ;
 in
 
 {
   programs.zapzap = {
     enable = true;
 
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.zapzap)
-      else pkgs.zapzap
-    );
+    package = wrapGraphics pkgs.zapzap;
 
     settings = {
       notification.donation_message = true;

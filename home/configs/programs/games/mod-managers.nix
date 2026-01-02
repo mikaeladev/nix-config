@@ -1,13 +1,12 @@
-{ config, globals, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  inherit (config.lib.custom) wrapGraphics;
+in
 
 {
   programs.deadlock-mod-manager = {
     enable = true;
-
-    package = (
-      if globals.standalone
-      then (config.lib.nixGL.wrap pkgs.deadlock-mod-manager)
-      else pkgs.deadlock-mod-manager
-    );
+    package = wrapGraphics pkgs.deadlock-mod-manager;
   };
 }

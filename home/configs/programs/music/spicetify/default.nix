@@ -1,6 +1,8 @@
-{ inputs, pkgs, ... }:
+{ config, inputs, pkgs, ... }:
 
 let
+  inherit (config.lib.custom) wrapGraphics;
+
   spicePkgs = inputs.spicetify.legacyPackages.${pkgs.stdenv.system};
 in
 
@@ -9,12 +11,15 @@ in
     inputs.spicetify.homeManagerModules.default
   ];
 
-  programs.spicetify = {
-    enable = true;
+  home.packages = [
+    (wrapGraphics config.programs.spicetify.spicedSpotify)
+  ];
 
+  programs.spicetify = {
+    enable = false;
     wayland = true;
     windowManagerPatch = true;
-
+    
     colorScheme = "RosePine";
     theme = spicePkgs.themes.text // {
       additionalCss = builtins.readFile ./custom.css;
