@@ -2,7 +2,7 @@
 
 {
   imports = [
+    ./minecraft.nix
     ./mod-managers.nix
-    ./prism-launcher.nix
   ];
 }

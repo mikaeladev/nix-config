@@ -41,6 +41,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    
+    prismlauncher = {
+      url = "github:mikaeladev/nix-prismlauncher";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     spicetify = {
       url = "github:Gerg-L/spicetify-nix";

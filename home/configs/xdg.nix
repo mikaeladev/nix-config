@@ -83,7 +83,7 @@ in
 
       defaultApplicationPackages = with config.programs; [
         kitty.package
-        prism-launcher.package
+        prismlauncher.package
         spicetify.spicedSpotify
         zapzap.package
       ];
