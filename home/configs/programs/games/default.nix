@@ -2,7 +2,7 @@
 
 {
   imports = [
+    ./deadlock.nix
     ./minecraft.nix
-    ./mod-managers.nix
   ];
 }
