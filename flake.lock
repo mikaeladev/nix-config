@@ -241,11 +241,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1767629933,
-        "narHash": "sha256-Ygn6QMSXq2jnfKgm0P0oIZK/9XM90pZfZCQrcmR3lJk=",
+        "lastModified": 1767995735,
+        "narHash": "sha256-uqwbYSXb+eIpQ9k2h7A1LshgDQFbjbHe6Z0eRKQVTxY=",
         "owner": "mikaeladev",
         "repo": "nix-prismlauncher",
-        "rev": "601bc4043b2cffa2899f8a4eb233d16665a51e55",
+        "rev": "b29a8f4707a45acd20ce16c2ae97871771b282e3",
         "type": "github"
       },
       "original": {

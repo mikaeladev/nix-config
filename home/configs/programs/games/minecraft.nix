@@ -12,5 +12,16 @@ in
   programs.prismlauncher = {
     enable = true;
     package = wrapGraphics pkgs.prismlauncher;
+    
+    theme = {
+      icons = "flat_white";
+      widgets = "dark";
+      cat = "rory";
+    };
+
+    icons = [
+      ./assets/fabulously-optimised.png
+      ./assets/java.png
+    ];
   };
 }
