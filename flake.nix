@@ -2,9 +2,10 @@
   description = "nix config flake";
 
   inputs = {
-    nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
+
+    flatpaks.url = "github:gmodena/nix-flatpak";
 
     agenix = {
       url = "github:ryantm/agenix";
@@ -12,27 +13,8 @@
       inputs.darwin.follows = "";
     };
 
-    flatpaks = {
-      url = "github:gmodena/nix-flatpak";
-    };
-
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nixGL = {
-      url = "github:nix-community/nixGL/pull/187/head";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nvibrant = {
-      url = "github:mikaeladev/nix-nvibrant";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    pixel-cursors = {
-      url = "github:mikaeladev/pixel-cursors";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -41,25 +23,44 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    
-    prismlauncher = {
-      url = "github:mikaeladev/nix-prismlauncher";
+
+    # utils & wrappers #
+
+    nixGL = {
+      url = "github:nix-community/nixGL/pull/187/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    spicetify = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
     wrappers = {
       url = "github:Lassulus/wrappers";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # programs & overlays #
+
+    nvibrant = {
+      url = "github:mikaeladev/nix-nvibrant";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
+    pixel-cursors = {
+      url = "github:mikaeladev/pixel-cursors";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
+    prismlauncher = {
+      url = "github:mikaeladev/nix-prismlauncher";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
+    spicetify = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake/beta";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
       inputs.home-manager.follows = "home-manager";
     };
   };
@@ -68,6 +69,7 @@
     inputs@{
       self,
       nixpkgs,
+      nixpkgs-stable,
       agenix,
       home-manager,
       nvibrant,
@@ -76,8 +78,8 @@
 
     let
       system = "x86_64-linux";
-
-      pkgs = import nixpkgs {
+      
+      pkgs-unstable = import nixpkgs {
         inherit system;
 
         config = {
@@ -90,6 +92,15 @@
           nvibrant.overlays.default
           self.overlays.default
         ];
+      };
+      
+      pkgs-stable = import nixpkgs-stable {
+        inherit system;
+        
+        config = {
+          allowUnfree = true;
+          nvidia.acceptLicense = true;
+        };
       };
 
       globals = rec {
@@ -105,35 +116,36 @@
           };
         };
       };
-      
+
       nixosLib = import ./nixos/modules/lib/extend-lib.nix {
-        inherit globals inputs pkgs;
+        inherit globals inputs;
+        pkgs = pkgs-unstable;
       };
 
-      mkNixos = nixpkgs.lib.nixosSystem;
-      mkHome = home-manager.lib.homeManagerConfiguration;
+      mkNixosConfig = nixpkgs.lib.nixosSystem;
+      mkHomeConfig = home-manager.lib.homeManagerConfiguration;
     in
 
     {
       overlays.default = import ./pkgs { inherit inputs system; };
 
-      nixosConfigurations.desktop = mkNixos {
-        inherit pkgs;
+      nixosConfigurations.desktop = mkNixosConfig {
         lib = nixosLib;
         modules = [ ./nixos ];
+        pkgs = pkgs-unstable;
         specialArgs = {
-          inherit inputs;
+          inherit inputs pkgs-stable;
           globals = globals // {
             standalone = false;
           };
         };
       };
 
-      homeConfigurations.mainuser = mkHome {
-        inherit pkgs;
+      homeConfigurations.mainuser = mkHomeConfig {
         modules = [ ./home ];
+        pkgs = pkgs-unstable;
         extraSpecialArgs = {
-          inherit inputs;
+          inherit inputs pkgs-stable;
           globals = globals // {
             standalone = true;
           };

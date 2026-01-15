@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, ... }:
+{ config, inputs, lib, pkgs-stable, ... }:
 
 let
   inherit (config.lib.custom) wrapGraphics;
@@ -14,7 +14,7 @@ in
 
   programs.prismlauncher = {
     enable = true;
-    package = wrapGraphics pkgs.prismlauncher;
+    package = wrapGraphics pkgs-stable.prismlauncher;
 
     icons = [
       ./assets/fabulously-optimised.png

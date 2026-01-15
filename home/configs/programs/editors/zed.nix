@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs-stable, ... }:
 
 let
   inherit (config.lib.custom) wrapGraphics;
@@ -7,12 +7,12 @@ in
 {
   programs.zed-editor = {
     enable = true;
-    package = wrapGraphics pkgs.zed-editor;
+    package = wrapGraphics pkgs-stable.zed-editor;
     
     extraPackages = [
-      pkgs.nil
-      pkgs.nixd
-      pkgs.shellcheck
+      pkgs-stable.nil
+      pkgs-stable.nixd
+      pkgs-stable.shellcheck
     ];
 
     # immutable config files
