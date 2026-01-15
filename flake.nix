@@ -52,6 +52,11 @@
       url = "github:mikaeladev/nix-prismlauncher";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+    
+    rust = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     spicetify = {
       url = "github:Gerg-L/spicetify-nix";
@@ -73,6 +78,7 @@
       agenix,
       home-manager,
       nvibrant,
+      rust,
       ...
     }:
 
@@ -90,6 +96,7 @@
         overlays = [
           agenix.overlays.default
           nvibrant.overlays.default
+          rust.overlays.default
           self.overlays.default
         ];
       };

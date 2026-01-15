@@ -10,6 +10,7 @@ in
     bun
     nodejs
     pnpm
+    rust-bin.stable.latest.default
   ] ++ optionals globals.standalone [
     protonplus
   ]);
