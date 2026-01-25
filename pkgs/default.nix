@@ -8,8 +8,8 @@ let
   };
 in
 
-{ 
+{
   apple-fonts = import ./apple-fonts args;
   lumon-splash = import ./lumon-splash.nix args;
-  pixel-cursors = import ./pixel-cursors.nix args;
+  pixel-cursors = inputs.pixel-cursors.packages.${system}.default;
 }
