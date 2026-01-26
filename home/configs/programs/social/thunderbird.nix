@@ -44,6 +44,7 @@ in
     enable = false; # leave disabled until config is complete
 
     configPath = "${thunderbirdHome}/.thunderbird";
+    nativeMessagingHostsPath = "${thunderbirdHome}/.mozilla/native-messaging-hosts";
 
     package = wrapGraphics (wrapHome {
       package = pkgs.thunderbird;
