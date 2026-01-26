@@ -1,12 +1,19 @@
 { config, pkgs, ... }:
 
 let
-  inherit (config.lib.custom) wrapGraphics;
+  inherit (config.lib.custom) wrapGraphics wrapHome;
+  inherit (config.xdg) stateHome;
+
+  steamHome = "${stateHome}/steam-home";
 in
 
 {
   programs.deadlock-mod-manager = {
     enable = true;
-    package = wrapGraphics pkgs.deadlock-mod-manager;
+
+    package = wrapHome {
+      package = wrapGraphics pkgs.deadlock-mod-manager;
+      newHome = steamHome;
+    };
   };
 }
