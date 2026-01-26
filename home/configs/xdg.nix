@@ -13,10 +13,23 @@ let
   };
 
   mimeGroups = {
-    imageFile = (with mimeApps; [ gwenview aseprite ]);
-    plainText = (with mimeApps; [ kwrite zed-editor ]);
-    srcCode = (with mimeApps; [ zed-editor kwrite ]);
-    webFile = (with mimeApps; [ zed-editor zen-browser kwrite ]);
+    imageFile = with mimeApps; [
+      gwenview
+      aseprite
+    ];
+    plainText = with mimeApps; [
+      kwrite
+      zed-editor
+    ];
+    srcCode = with mimeApps; [
+      zed-editor
+      kwrite
+    ];
+    webFile = with mimeApps; [
+      zed-editor
+      zen-browser
+      kwrite
+    ];
   };
 
   addedMimeAssociations = {
@@ -69,7 +82,7 @@ in
       configHome
       dataHome
       stateHome
-    ;
+      ;
 
     enable = true;
     autostart.enable = true;

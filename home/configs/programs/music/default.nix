@@ -1,7 +1,5 @@
 { ... }:
 
 {
-  imports = [
-    ./spicetify
-  ];
+  imports = [ ./spicetify ];
 }

@@ -7,7 +7,7 @@
 }:
 
 let
-  inherit (lib) mkMerge;
+  inherit (lib) mkIf mkMerge;
 in
 
 mkMerge [
@@ -72,11 +72,11 @@ mkMerge [
   }
 
   # overrides for non-nixos / kde quirks
-  (if globals.standalone then {
+  (mkIf globals.standalone {
     programs.kvantum.package = null;
     qt.style.package = null;
 
     xdg.configFile."./Kvantum/WhiteSur".source =
       "${config.home.profileDirectory}/share/Kvantum/WhiteSur";
-  } else {})
+  })
 ]

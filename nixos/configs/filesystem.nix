@@ -16,13 +16,13 @@ in
         "subvol=@"
       ];
     };
-    
+
     "/boot" = {
       device = efiDevice;
       fsType = "vfat";
       options = [ "umask=0077" ];
     };
-    
+
     "/home" = {
       device = nixosDevice;
       fsType = "btrfs";
@@ -31,7 +31,7 @@ in
         "subvol=@home"
       ];
     };
-    
+
     "/home/${globals.mainuser.username}/storage" = {
       device = storageDevice;
       fsType = "btrfs";

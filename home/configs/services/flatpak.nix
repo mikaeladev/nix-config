@@ -11,8 +11,6 @@
       onCalendar = "weekly";
     };
 
-    packages = [
-      "eu.betterbird.Betterbird"
-    ];
+    packages = [ "eu.betterbird.Betterbird" ];
   };
 }

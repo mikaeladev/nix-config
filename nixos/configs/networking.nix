@@ -6,7 +6,7 @@ let
     mkWifiConfig
     mkSurfsharkConfig
     mkNameserverConfig
-  ;
+    ;
 in
 
 {

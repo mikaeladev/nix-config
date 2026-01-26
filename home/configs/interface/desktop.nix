@@ -1,9 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.packages = [
-    pkgs.whitesur-kde
-  ];
+  home.packages = [ pkgs.whitesur-kde ];
 
   programs.plasma.workspace = {
     wallpaper = "${config.xdg.dataHome}/wallpapers/current.png";

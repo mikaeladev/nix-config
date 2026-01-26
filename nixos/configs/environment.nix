@@ -1,9 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    ./desktops/plasma.nix
-  ];
+  imports = [ ./desktops/plasma.nix ];
 
   environment = {
     localBinInPath = true;
@@ -27,10 +25,7 @@
 
     steam = {
       enable = true;
-
-      extraCompatPackages = [
-        pkgs.proton-ge-bin
-      ];
+      extraCompatPackages = [ pkgs.proton-ge-bin ];
     };
   };
 

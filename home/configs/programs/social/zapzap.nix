@@ -1,10 +1,7 @@
 { config, pkgs, ... }:
 
 let
-  inherit (config.lib.custom)
-    updateDesktopFileValue
-    wrapGraphics
-    ;
+  inherit (config.lib.custom) updateDesktopFileValue wrapGraphics;
 in
 
 {

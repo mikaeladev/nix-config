@@ -1,13 +1,15 @@
-{ config, globals, lib, pkgs, ... }:
+{
+  config,
+  globals,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (globals.mainuser.xdg) stateHome;
 
-  inherit (config.lib.custom)
-    wrapGraphics
-    wrapHome
-    mkThunderbirdAddon
-    ;
+  inherit (config.lib.custom) wrapGraphics wrapHome mkThunderbirdAddon;
 
   thunderbirdHome = "${stateHome}/thunderbird-home";
 

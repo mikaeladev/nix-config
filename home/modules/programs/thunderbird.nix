@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (pkgs.stdenv.hostPlatform) isDarwin;
@@ -13,27 +18,26 @@ let
 
   cfg = config.programs.thunderbird;
 
-  oldConfigPath = 
-    if isDarwin
-    then "Library/Thunderbird"
-    else ".thunderbird";
+  oldConfigPath = if isDarwin then "Library/Thunderbird" else ".thunderbird";
 
   newConfigPath = cfg.configPath;
 
-  addId = value: builtins.map (
-    a: a // { id = builtins.hashString "sha256" a.name; }
-  ) value;
+  addId =
+    value:
+    builtins.map (a: a // { id = builtins.hashString "sha256" a.name; }) value;
 
-  getAccountsForProfile = profileName: accounts: builtins.filter (a:
-    (a.thunderbird.profiles == [ ])
-    || (lib.any (p: p == profileName) a.thunderbird.profiles)
-  ) accounts;
+  getAccountsForProfile =
+    profileName: accounts:
+    builtins.filter (
+      a:
+      (a.thunderbird.profiles == [ ])
+      || (lib.any (p: p == profileName) a.thunderbird.profiles)
+    ) accounts;
 
   redirectFile = value: {
     "${oldConfigPath}/${value}".enable = false;
     "${newConfigPath}/${value}".text =
-      config.home.file."${oldConfigPath}/${value}".text
-    ;
+      config.home.file."${oldConfigPath}/${value}".text;
   };
 
   redirectDirectory = value: {
@@ -68,15 +72,15 @@ in
         name: profile:
 
         let
-          enabledEmailAccounts = builtins.filter
-            (a: a.enable && a.thunderbird.enable)
-            (builtins.attrValues config.accounts.email.accounts);
+          enabledEmailAccounts = builtins.filter (a: a.enable && a.thunderbird.enable) (
+            builtins.attrValues config.accounts.email.accounts
+          );
 
           enabledEmailAccountsWithId = addId enabledEmailAccounts;
 
-          emailAccountsWithFilters = builtins.filter
-            (a: a.thunderbird.messageFilters != [ ])
-            (getAccountsForProfile name enabledEmailAccountsWithId);
+          emailAccountsWithFilters = builtins.filter (
+            a: a.thunderbird.messageFilters != [ ]
+          ) (getAccountsForProfile name enabledEmailAccountsWithId);
         in
 
         mkMerge (
@@ -87,10 +91,9 @@ in
             (redirectFileIf (profile.search.enable) "${name}/search.json.mozlz4")
             (redirectDirectoryIf (profile.extensions != [ ]) "${name}/extensions")
           ]
-          ++ (builtins.map
-            (a: redirectFile "${name}/ImapMail/${a.id}/msgFilterRules.dat")
-            emailAccountsWithFilters
-          )
+          ++ (builtins.map (
+            a: redirectFile "${name}/ImapMail/${a.id}/msgFilterRules.dat"
+          ) emailAccountsWithFilters)
         )
       ) cfg.profiles)
     )

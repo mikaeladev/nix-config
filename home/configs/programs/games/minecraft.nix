@@ -1,4 +1,10 @@
-{ config, inputs, lib, pkgs-stable, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs-stable,
+  ...
+}:
 
 let
   inherit (config.lib.custom) wrapGraphics;
@@ -8,9 +14,7 @@ let
 in
 
 {
-  imports = [
-    inputs.prismlauncher.homeModules.default
-  ];
+  imports = [ inputs.prismlauncher.homeModules.default ];
 
   programs.prismlauncher = {
     enable = true;

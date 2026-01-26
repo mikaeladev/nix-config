@@ -1,7 +1,5 @@
 { ... }:
 
 {
-  imports = [
-    ./obs.nix
-  ];
+  imports = [ ./obs.nix ];
 }

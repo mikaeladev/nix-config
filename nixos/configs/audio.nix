@@ -1,19 +1,19 @@
 { ... }:
 
 let
-  mkRenameRule = { name, device }: {
-    actions.update-props = {
-      "alsa.card_name" = name;
-      "alsa.long_card_name" = name;
-      "device.name" = name;
-      "device.description" = name;
-      "node.description" = name;
-      "node.nick" = name;
+  mkRenameRule =
+    { name, device }:
+    {
+      actions.update-props = {
+        "alsa.card_name" = name;
+        "alsa.long_card_name" = name;
+        "device.name" = name;
+        "device.description" = name;
+        "node.description" = name;
+        "node.nick" = name;
+      };
+      matches = [ { "node.name" = device; } ];
     };
-    matches = [
-      { "node.name" = device; }
-    ];
-  };
 in
 
 {

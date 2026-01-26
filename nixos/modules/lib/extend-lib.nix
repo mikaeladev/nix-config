@@ -1,4 +1,8 @@
-{ globals, inputs, pkgs }:
+{
+  globals,
+  inputs,
+  pkgs,
+}:
 
 let
   mkCustomLib = import ./.;

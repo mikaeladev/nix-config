@@ -9,19 +9,17 @@
 
 {
   lib.custom = rec {
-    wrapGraphics = package: (
-      if globals.standalone
-      then config.lib.nixGL.wrap package
-      else package
-    );
+    wrapGraphics =
+      package: if globals.standalone then config.lib.nixGL.wrap package else package;
 
-    wrapHome = {
-      package,
-      exePath ? lib.getExe package,
-      binName ? baseNameOf exePath,
-      xdgs ? globals.mainuser.xdg,
-      newHome ? "${xdgs.stateHome}/${binName}-home",
-    }: (
+    wrapHome =
+      {
+        package,
+        exePath ? lib.getExe package,
+        binName ? baseNameOf exePath,
+        xdgs ? globals.mainuser.xdg,
+        newHome ? "${xdgs.stateHome}/${binName}-home",
+      }:
       let
         inherit (xdgs)
           cacheHome
@@ -30,9 +28,13 @@
           stateHome
           ;
       in
-
       wrapPackage {
-        inherit binName exePath package pkgs;
+        inherit
+          binName
+          exePath
+          package
+          pkgs
+          ;
 
         preHook = ''
           maybeSymlink() {
@@ -61,21 +63,22 @@
 
           export HOME="${newHome}"
         '';
-      }
-    );
-    
-    wrapPackage = { pkgs ? args.pkgs, ... }@args2: (
-      inputs.wrappers.lib.wrapPackage ({ inherit pkgs; } // args2)
-    );
-    
-    wrapStandaloneBin = binPath: (
+      };
+
+    wrapPackage =
+      {
+        pkgs ? args.pkgs,
+        ...
+      }@args2:
+      inputs.wrappers.lib.wrapPackage ({ inherit pkgs; } // args2);
+
+    wrapStandaloneBin =
+      binPath:
       let
         binName = baseNameOf binPath;
       in
-      
       pkgs.writeShellScriptBin binName ''
         exec -a "${binName}" "${binPath}" "$@"
-      ''
-    );
+      '';
   };
 }

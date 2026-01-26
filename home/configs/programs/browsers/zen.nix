@@ -1,10 +1,12 @@
-{ config, inputs, pkgs, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
 
 let
-  inherit (config.lib.custom)
-    wrapGraphics
-    wrapHome
-    ;
+  inherit (config.lib.custom) wrapGraphics wrapHome;
 in
 
 let
@@ -14,9 +16,7 @@ let
 in
 
 {
-  imports = [
-    inputs.zen-browser.homeModules.beta
-  ];
+  imports = [ inputs.zen-browser.homeModules.beta ];
 
   programs.zen-browser = {
     enable = true;
@@ -26,7 +26,7 @@ in
       newHome = zenHome;
     };
 
-    profiles = {};
+    profiles = { };
   };
 
   home.file = {

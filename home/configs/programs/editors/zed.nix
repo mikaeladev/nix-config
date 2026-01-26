@@ -8,7 +8,7 @@ in
   programs.zed-editor = {
     enable = true;
     package = wrapGraphics pkgs-stable.zed-editor;
-    
+
     extraPackages = [
       pkgs-stable.nil
       pkgs-stable.nixd
@@ -84,6 +84,5 @@ in
       "xml"
     ];
   };
-  
-  
+
 }

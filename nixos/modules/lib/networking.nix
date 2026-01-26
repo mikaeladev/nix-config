@@ -32,95 +32,101 @@ let
 in
 
 {
-  mkEthernetConfig = {
-    name,
-    uuid,
-  }: {
-    inherit ipv4 ipv6;
+  mkEthernetConfig =
+    { name, uuid }:
+    {
+      inherit ipv4 ipv6;
 
-    connection = {
-      inherit uuid;
-      id = name;
-      type = "ethernet";
+      connection = {
+        inherit uuid;
+        id = name;
+        type = "ethernet";
+      };
+
+      ethernet = {
+        auto-negotiate = true;
+      };
     };
 
-    ethernet = {
-      auto-negotiate = true;
-    };
-  };
+  mkWifiConfig =
+    {
+      name,
+      uuid,
+      ssid,
+      pass,
+    }:
+    {
+      inherit ipv4 ipv6;
 
-  mkWifiConfig = {
-    name,
-    uuid,
-    ssid,
-    pass,
-  }: {
-    inherit ipv4 ipv6;
+      connection = {
+        inherit uuid;
+        id = name;
+        type = "wifi";
+        permissions = "";
+      };
 
-		connection = {
-      inherit uuid;
- 			id = name;
- 			type = "wifi";
-  		permissions = "";
-		};
+      wifi = {
+        inherit ssid;
+        mode = "infrastructure";
+      };
 
-		wifi = {
-		  inherit ssid;
- 			mode = "infrastructure";
-		};
-
-		wifi-security = {
- 			key-mgmt = "wpa-psk";
- 			psk = pass;
-		};
-  };
-
-  mkSurfsharkConfig = {
-    name,
-    uuid,
-    endpoint,
-    publicKey,
-    privateKey,
-    autoconnect ? false,
-  }: {
-    connection = {
-      inherit uuid autoconnect;
-      id = name;
-      type = "wireguard";
-      permissions = "user:${globals.mainuser.username}:;";
+      wifi-security = {
+        key-mgmt = "wpa-psk";
+        psk = pass;
+      };
     };
 
-    ipv4 = {
-      address1 = "10.14.0.2/16";
-      dns = "162.252.172.57;149.154.159.92;";
-      dns-search = "~.;";
-      method = "manual";
+  mkSurfsharkConfig =
+    {
+      name,
+      uuid,
+      endpoint,
+      publicKey,
+      privateKey,
+      autoconnect ? false,
+    }:
+    {
+      connection = {
+        inherit uuid autoconnect;
+        id = name;
+        type = "wireguard";
+        permissions = "user:${globals.mainuser.username}:;";
+      };
+
+      ipv4 = {
+        address1 = "10.14.0.2/16";
+        dns = "162.252.172.57;149.154.159.92;";
+        dns-search = "~.;";
+        method = "manual";
+      };
+
+      ipv6 = {
+        addr-gen-mode = "stable-privacy";
+        method = "ignore";
+      };
+
+      wireguard = {
+        private-key = privateKey;
+        fwmark = 51820;
+        listen-port = 32;
+        mtu = 1280;
+      };
+
+      "wireguard-peer.${publicKey}" = {
+        inherit endpoint;
+        persistent-keepalive = 30;
+        allowed-ips = "0.0.0.0/0;";
+      };
     };
 
-    ipv6 = {
-      addr-gen-mode = "stable-privacy";
-      method = "ignore";
-    };
-
-    wireguard = {
-      private-key = privateKey;
-      fwmark = 51820;
-      listen-port = 32;
-      mtu = 1280;
-    };
-
-    "wireguard-peer.${publicKey}" = {
-      inherit endpoint;
-      persistent-keepalive = 30;
-      allowed-ips = "0.0.0.0/0;";
-    };
-  };
-
-  mkNameserverConfig = type: (
-    if type == "ipv4"
-    then ipv4Nameservers
-    else if type == "ipv6"
-    then ipv6Nameservers
-    else throw "Invalid nameserver type"
-  );
+  mkNameserverConfig =
+    type:
+    (
+      if type == "ipv4" then
+        ipv4Nameservers
+      else if type == "ipv6" then
+        ipv6Nameservers
+      else
+        throw "Invalid nameserver type"
+    );
 }

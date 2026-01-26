@@ -58,8 +58,8 @@ in
 
   config = mkIf cfg.enable {
     home.packages = mkMerge [
-      [(mkIf (cfg.package != null) cfg.package)]
-      [(mkIf (cfg.theme.package != null) cfg.theme.package)]
+      [ (mkIf (cfg.package != null) cfg.package) ]
+      [ (mkIf (cfg.theme.package != null) cfg.theme.package) ]
     ];
 
     xdg.configFile."./Kvantum/kvantum.kvconfig".text = toKvconfig {

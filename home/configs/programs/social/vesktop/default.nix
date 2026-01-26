@@ -1,10 +1,7 @@
 { config, pkgs, ... }:
 
 let
-  inherit (config.lib.custom)
-    updateDesktopFileValue
-    wrapGraphics
-    ;
+  inherit (config.lib.custom) updateDesktopFileValue wrapGraphics;
 in
 
 {
@@ -52,9 +49,7 @@ in
         disableMinSize = true;
         winCtrlQ = true;
 
-        enabledThemes = [
-          "system24.css"
-        ];
+        enabledThemes = [ "system24.css" ];
 
         plugins = builtins.fromJSON (builtins.readFile ./settings/plugins.json);
 

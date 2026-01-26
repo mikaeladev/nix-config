@@ -4,7 +4,6 @@ let
   inherit (config.lib.custom) wrapGraphics;
 in
 
-
 {
   services.easyeffects = {
     enable = true;
