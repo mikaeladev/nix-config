@@ -24,6 +24,11 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
     # utils & wrappers #
 
     nixGL = {
@@ -52,7 +57,7 @@
       url = "github:mikaeladev/nix-prismlauncher";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    
+
     rust = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -77,6 +82,7 @@
       nixpkgs-stable,
       agenix,
       home-manager,
+      treefmt-nix,
       nvibrant,
       rust,
       ...
@@ -84,7 +90,7 @@
 
     let
       system = "x86_64-linux";
-      
+
       pkgs-unstable = import nixpkgs {
         inherit system;
 
@@ -100,10 +106,10 @@
           self.overlays.default
         ];
       };
-      
+
       pkgs-stable = import nixpkgs-stable {
         inherit system;
-        
+
         config = {
           allowUnfree = true;
           nvidia.acceptLicense = true;
@@ -131,9 +137,13 @@
 
       mkNixosConfig = nixpkgs.lib.nixosSystem;
       mkHomeConfig = home-manager.lib.homeManagerConfiguration;
+
+      treefmtEval = treefmt-nix.lib.evalModule pkgs-stable ./treefmt.nix;
     in
 
     {
+      formatter.${system} = treefmtEval.config.build.wrapper;
+
       overlays.default = import ./pkgs { inherit inputs system; };
 
       nixosConfigurations.desktop = mkNixosConfig {

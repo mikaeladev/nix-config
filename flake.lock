@@ -285,6 +285,7 @@
         "prismlauncher": "prismlauncher",
         "rust": "rust",
         "spicetify": "spicetify",
+        "treefmt-nix": "treefmt-nix_3",
         "wrappers": "wrappers",
         "zen-browser": "zen-browser"
       }
@@ -424,6 +425,26 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "rev": "d56486eb9493ad9c4777c65932618e9c2d0468fc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "treefmt-nix_3": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-stable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769353635,
+        "narHash": "sha256-J0G1ACrUK29M0THPAsz429eZX07GmR9Bs/b0pB3N0dQ=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "f46bb205f239b415309f58166f8df6919fa88377",
         "type": "github"
       },
       "original": {
