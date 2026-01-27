@@ -42,7 +42,6 @@ in
       CentralModsDir = "${prismStorage}/mods";
       InstanceDir = "${prismStorage}/instances";
       SkinsDir = "${prismStorage}/skins";
-      IconsDir = "icons";
       JavaDir = "java";
 
       NumberOfConcurrentDownloads = 12;
