@@ -31,7 +31,7 @@ in
       cat = "rory";
     };
 
-    extraConfig = {
+    settings = {
       CloseAfterLaunch = true;
 
       ConsoleFont = lib.head config.fonts.fontconfig.defaultFonts.monospace;
