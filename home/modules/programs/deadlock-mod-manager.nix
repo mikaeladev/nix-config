@@ -13,7 +13,7 @@ in
 
 {
   options.programs.deadlock-mod-manager = {
-    enable = mkEnableOption "Enable Deadlock Mod Manager";
+    enable = mkEnableOption "Deadlock Mod Manager";
 
     package = mkPackageOption pkgs "deadlock-mod-manager" {
       nullable = true;
