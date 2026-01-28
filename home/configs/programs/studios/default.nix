@@ -1,5 +1,8 @@
 { ... }:
 
 {
-  imports = [ ./obs.nix ];
+  imports = [
+    ./krita.nix
+    ./obs.nix
+  ];
 }
