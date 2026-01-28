@@ -1,78 +1,106 @@
-{ config, globals, ... }:
+{
+  config,
+  globals,
+  lib,
+  ...
+}:
 
 let
-  mimeApps = {
-    aseprite = "aseprite.desktop";
-    deadlock-mod-manager = ".deadlock-mod-manager-wrapped-handler.desktop";
-    dolphin = "org.kde.dolphin.desktop";
-    gwenview = "org.kde.gwenview.desktop";
-    kwrite = "org.kde.kwrite.desktop";
-    vesktop = "vesktop.desktop";
-    zed-editor = "dev.zed.Zed.desktop";
-    zen-browser = "app.zen_browser.zen.desktop";
+  inherit (lib) mapAttrs;
+
+  withExtension =
+    extension: attrs: mapAttrs (_: value: value + ".${extension}") attrs;
+
+  mimeApps = withExtension "desktop" {
+    # kde apps (system-wide)
+    ark = "org.kde.ark";
+    dolphin = "org.kde.dolphin";
+    gwenview = "org.kde.gwenview";
+    kwrite = "org.kde.kwrite";
+    # user apps (see programs dir)
+    aseprite = "aseprite";
+    deadlock-mod-manager = "Deadlock Mod Manager";
+    prismlauncher = "org.prismlauncher.PrismLauncher";
+    vesktop = "vesktop";
+    zed-editor = "dev.zed.Zed";
+    zen-browser = "zen-beta";
   };
 
-  mimeGroups = {
-    imageFile = with mimeApps; [
+  mimeGroups = with mimeApps; rec {
+    plainText = [
+      kwrite
+      zed-editor
+    ];
+    rasterImageFile = [
       gwenview
       aseprite
     ];
-    plainText = with mimeApps; [
-      kwrite
-      zed-editor
-    ];
-    srcCode = with mimeApps; [
+    srcCode = [
       zed-editor
       kwrite
     ];
-    webFile = with mimeApps; [
+    srcCodeWeb = [
       zed-editor
       zen-browser
       kwrite
     ];
+    vectorImageFile = [ gwenview ] ++ srcCodeWeb;
   };
 
-  addedMimeAssociations = {
-    "x-scheme-handler/deadlock-mod-manager" = mimeApps.deadlock-mod-manager;
-    "x-scheme-handler/discord" = mimeApps.vesktop;
-    "x-scheme-handler/zed" = mimeApps.zed-editor;
+  associations = {
+    added = with mimeApps; {
+      "x-scheme-handler/deadlock-mod-manager" = deadlock-mod-manager;
+      "x-scheme-handler/discord" = vesktop;
+      "x-scheme-handler/zed" = zed-editor;
+      "x-scheme-handler/curseforge" = prismlauncher;
+      "x-scheme-handler/prismlauncher" = prismlauncher;
+    };
   };
 
-  defaultApplications = addedMimeAssociations // {
-    "inode/directory" = [
-      mimeApps.dolphin
-      mimeApps.zed-editor
-    ];
+  defaultApplications =
+    associations.added
+    // (with mimeGroups; {
+      "inode/directory" = with mimeApps; [
+        dolphin
+        zed-editor
+      ];
 
-    "image/png" = mimeGroups.imageFile;
-    "image/webp" = mimeGroups.imageFile;
+      "application/x-zerosize" = plainText;
+      "text/*" = plainText;
 
-    "application/x-zerosize" = mimeGroups.plainText;
-    "text/*" = mimeGroups.plainText;
+      "image/png" = rasterImageFile;
+      "image/webp" = rasterImageFile;
+      "image/svg+xml" = vectorImageFile;
 
-    "application/x-docbook+xml" = mimeGroups.srcCode;
-    "application/x-shellscript" = mimeGroups.srcCode;
-    "application/x-yaml" = mimeGroups.srcCode;
-    "text/csv" = mimeGroups.srcCode;
-    "text/markdown" = mimeGroups.srcCode;
-    "text/x-c++hdr" = mimeGroups.srcCode;
-    "text/x-c++src" = mimeGroups.srcCode;
-    "text/x-chdr" = mimeGroups.srcCode;
-    "text/x-cmake" = mimeGroups.srcCode;
-    "text/x-csharp" = mimeGroups.srcCode;
-    "text/x-csrc" = mimeGroups.srcCode;
-    "text/x-go" = mimeGroups.srcCode;
-    "text/x-java" = mimeGroups.srcCode;
-    "text/x-lua" = mimeGroups.srcCode;
-    "text/x-python" = mimeGroups.srcCode;
-    "text/x-qml" = mimeGroups.srcCode;
+      "application/x-docbook+xml" = srcCode;
+      "application/x-shellscript" = srcCode;
+      "application/x-yaml" = srcCode;
+      "text/csv" = srcCode;
+      "text/markdown" = srcCode;
+      "text/x-c++hdr" = srcCode;
+      "text/x-c++src" = srcCode;
+      "text/x-chdr" = srcCode;
+      "text/x-cmake" = srcCode;
+      "text/x-csharp" = srcCode;
+      "text/x-csrc" = srcCode;
+      "text/x-go" = srcCode;
+      "text/x-java" = srcCode;
+      "text/x-lua" = srcCode;
+      "text/x-python" = srcCode;
+      "text/x-qml" = srcCode;
 
-    "application/json" = mimeGroups.webFile;
-    "application/xml" = mimeGroups.webFile;
-    "text/css" = mimeGroups.webFile;
-    "text/javascript" = mimeGroups.webFile;
-    "text/html" = mimeGroups.webFile;
-  };
+      "application/json" = srcCodeWeb;
+      "application/xml" = srcCodeWeb;
+      "text/css" = srcCodeWeb;
+      "text/javascript" = srcCodeWeb;
+      "text/html" = srcCodeWeb;
+    });
+
+  defaultApplicationPackages = with config.programs; [
+    kitty.package
+    spicetify.spicedSpotify
+    zapzap.package
+  ];
 in
 
 {
@@ -89,17 +117,9 @@ in
     mime.enable = true;
 
     mimeApps = {
+      inherit associations defaultApplications defaultApplicationPackages;
+
       enable = true;
-
-      associations.added = addedMimeAssociations;
-      defaultApplications = defaultApplications;
-
-      defaultApplicationPackages = with config.programs; [
-        kitty.package
-        prismlauncher.package
-        spicetify.spicedSpotify
-        zapzap.package
-      ];
     };
 
     userDirs = with config.home; {
