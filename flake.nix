@@ -24,16 +24,16 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
-
     # utils & wrappers #
 
     nixGL = {
       url = "github:nix-community/nixGL/pull/187/head";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    treefmt = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
     wrappers = {
@@ -77,7 +77,7 @@
       nixpkgs-stable,
       agenix,
       home-manager,
-      treefmt-nix,
+      treefmt,
       nvibrant,
       rust,
       ...
@@ -133,7 +133,7 @@
       mkNixosConfig = nixpkgs.lib.nixosSystem;
       mkHomeConfig = home-manager.lib.homeManagerConfiguration;
 
-      treefmtEval = treefmt-nix.lib.evalModule pkgs-stable ./treefmt.nix;
+      treefmtEval = treefmt.lib.evalModule pkgs-stable ./treefmt.nix;
     in
 
     {
