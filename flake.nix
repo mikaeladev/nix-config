@@ -53,11 +53,6 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
-    prismlauncher = {
-      url = "github:mikaeladev/nix-prismlauncher";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
-
     rust = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";

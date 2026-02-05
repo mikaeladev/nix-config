@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs-stable,
   ...
@@ -14,8 +13,6 @@ let
 in
 
 {
-  imports = [ inputs.prismlauncher.homeModules.default ];
-
   programs.prismlauncher = {
     enable = true;
     package = wrapGraphics pkgs-stable.prismlauncher;
@@ -25,12 +22,6 @@ in
       ./assets/java.png
     ];
 
-    theme = {
-      icons = "flat_white";
-      widgets = "dark";
-      cat = "rory";
-    };
-
     settings = {
       CloseAfterLaunch = true;
 
@@ -38,10 +29,15 @@ in
       ConsoleFontSize = 10;
       ConsoleMaxLines = 10000;
 
+      ApplicationTheme = "dark";
+      BackgroundCat = "rory";
+      IconTheme = "flat_white";
+
       DownloadsDir = config.xdg.userDirs.download;
       CentralModsDir = "${prismStorage}/mods";
       InstanceDir = "${prismStorage}/instances";
       SkinsDir = "${prismStorage}/skins";
+      IconsDir = "icons";
       JavaDir = "java";
 
       NumberOfConcurrentDownloads = 12;
