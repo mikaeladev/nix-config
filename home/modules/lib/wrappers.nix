@@ -15,6 +15,7 @@
     wrapHome =
       {
         package,
+        env ? { },
         exePath ? lib.getExe package,
         binName ? baseNameOf exePath,
         xdgs ? globals.mainuser.xdg,
@@ -31,6 +32,7 @@
       wrapPackage {
         inherit
           binName
+          env
           exePath
           package
           pkgs
