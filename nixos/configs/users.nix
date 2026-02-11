@@ -9,39 +9,29 @@
 let
   inherit (globals) mainuser;
   inherit (config.age) secrets;
-
-  extraGroups = [
-    "networkmanager"
-    "wheel"
-  ];
 in
 
 {
-  programs.zsh = {
-    enable = true;
-    shellInit = ''
-      if [ "$HOME" = "/home/${mainuser.username}" ]; then
-        export ZDOTDIR="${mainuser.xdg.configHome}/zsh"
-      fi
-    '';
-  };
+  programs.zsh.enable = true;
 
   users.users = {
     root = {
-      hashedPasswordFile = secrets."passwords/root".path;
       isSystemUser = true;
+      hashedPasswordFile = secrets."passwords/root".path;
       shell = pkgs.zsh;
       uid = 0;
     };
 
     "${mainuser.username}" = {
-      inherit extraGroups;
-
+      isNormalUser = true;
       description = mainuser.nickname;
       hashedPasswordFile = secrets."passwords/mainuser".path;
-      isNormalUser = true;
       shell = pkgs.zsh;
       uid = 1000;
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
     };
   };
 
@@ -49,7 +39,7 @@ in
     useGlobalPkgs = false;
     useUserPackages = true;
     backupFileExtension = "backup";
-    users.${mainuser.username} = import ../../home;
     extraSpecialArgs = { inherit globals inputs pkgs; };
+    users.${mainuser.username} = import ../../home;
   };
 }
