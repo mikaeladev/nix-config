@@ -7,76 +7,83 @@
 }:
 
 let
-  inherit (lib) mkIf mkMerge;
+  soundTheme = "ocean";
+  qtStyle = "kvantum";
+  kvantumTheme = "WhiteSurDark";
+  kdeTheme = "WhiteSur-dark";
+  kdePackage = pkgs.whitesur-kde;
 in
 
-mkMerge [
-  {
-    gtk = rec {
-      enable = true;
-      colorScheme = "dark";
+{
+  home.packages = [
+    pkgs.whitesur-gtk-theme
+    kdePackage
+  ];
 
-      theme = {
-        name = "WhiteSur-Dark";
-        package = pkgs.whitesur-gtk-theme;
-      };
+  gtk = rec {
+    enable = true;
 
-      iconTheme = {
-        name = "WhiteSur-dark";
-        package = pkgs.whitesur-icon-theme;
-      };
+    colorScheme = "dark";
+    theme.name = "WhiteSur-Dark";
 
-      gtk2 = {
-        configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-        extraConfig = ''
-          gtk-button-images=1
-          gtk-cursor-blink=1;
-          gtk-cursor-blink-time=1000;
-          gtk-decoration-layout=close,minimize,maximize:
-          gtk-enable-animations=1;
-          gtk-menu-images=1
-          gtk-sound-theme-name=ocean
-          gtk-toolbar-style=3
-        '';
-      };
-
-      gtk3.extraConfig = {
-        gtk-button-images = true;
-        gtk-cursor-blink = true;
-        gtk-cursor-blink-time = 1000;
-        gtk-decoration-layout = "close,minimize,maximize:";
-        gtk-enable-animations = true;
-        gtk-menu-images = true;
-        gtk-modules = "colorreload-gtk-module:window-decorations-gtk-module";
-        gtk-primary-button-warps-slider = true;
-        gtk-sound-theme-name = "ocean";
-        gtk-toolbar-style = 3;
-      };
-
-      gtk4 = gtk3;
+    gtk2 = {
+      configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+      extraConfig = ''
+        gtk-button-images=1
+        gtk-cursor-blink=1;
+        gtk-cursor-blink-time=1000;
+        gtk-decoration-layout=close,minimize,maximize:
+        gtk-enable-animations=1;
+        gtk-menu-images=1
+        gtk-sound-theme-name=${soundTheme}
+        gtk-toolbar-style=3
+      '';
     };
 
-    programs.kvantum = {
-      enable = true;
-
-      theme = {
-        name = "WhiteSurDark";
-        package = pkgs.whitesur-kde;
-      };
+    gtk3.extraConfig = {
+      gtk-button-images = true;
+      gtk-cursor-blink = true;
+      gtk-cursor-blink-time = 1000;
+      gtk-decoration-layout = "close,minimize,maximize:";
+      gtk-enable-animations = true;
+      gtk-menu-images = true;
+      gtk-modules = "colorreload-gtk-module:window-decorations-gtk-module";
+      gtk-primary-button-warps-slider = true;
+      gtk-sound-theme-name = soundTheme;
+      gtk-toolbar-style = 3;
     };
 
-    qt = {
-      enable = true;
-      style.name = "kvantum-dark";
+    gtk4 = gtk3;
+  };
+
+  qt = {
+    enable = true;
+
+    style = {
+      name = qtStyle;
+      package = (
+        if globals.standalone
+        then null
+        else with pkgs; [
+          libsForQt5.qtstyleplugin-kvantum
+          kdePackages.qtstyleplugin-kvantum
+        ]
+      );
     };
-  }
 
-  # overrides for non-nixos / kde quirks
-  (mkIf globals.standalone {
-    programs.kvantum.package = null;
-    qt.style.package = null;
+    kvantum.theme = kvantumTheme;
+  };
 
-    xdg.configFile."./Kvantum/WhiteSur".source =
-      "${config.home.profileDirectory}/share/Kvantum/WhiteSur";
-  })
-]
+  programs.plasma.workspace = {
+    theme = kdeTheme;
+    widgetStyle = qtStyle;
+    colorScheme = kvantumTheme;
+    soundTheme = soundTheme;
+  };
+
+  xdg.configFile = {
+    "Kvantum/WhiteSur" = lib.mkIf globals.standalone {
+      source = "${kdePackage}/share/Kvantum/WhiteSur";
+    };
+  };
+}

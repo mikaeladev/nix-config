@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   programs.plasma = {
@@ -32,5 +32,18 @@
       screenedgeEnabled = false;
       sheetEnabled = true;
     };
+
+    workspace = {
+      wallpaper = "${config.xdg.dataHome}/wallpapers/current.png";
+
+      windowDecorations = {
+        library = "org.kde.kwin.aurorae";
+        theme = "__aurorae__svg__WhiteSur-dark";
+      };
+    };
+  };
+
+  xdg.dataFile."./wallpapers/current.png" = {
+    source = ./assets/wallpaper.png;
   };
 }

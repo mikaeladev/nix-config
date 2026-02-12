@@ -1,70 +1,46 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
 let
-  inherit (lib)
-    literalExpression
-    mkEnableOption
-    mkOption
-    mkMerge
-    mkIf
-    types
-    ;
+  inherit (lib) literalExpression mkOption types;
 
-  cfg = config.programs.kvantum;
+  cfg = config.qt.kvantum;
 
-  toKvconfig = lib.generators.toINI { };
+  toIni = lib.generators.toINI { };
 in
 
 {
-  options.programs.kvantum = {
-    enable = mkEnableOption "Enable Kvantum";
-
-    package = mkOption {
-      type = types.nullOr types.package;
-      default = pkgs.kdePackages.qtstyleplugin-kvantum;
-      example = literalExpression "pkgs.kdePackages.qtstyleplugin-kvantum";
+  options.qt.kvantum = {
+    theme = mkOption {
+      type = with types; nullOr str;
+      default = null;
+      example = "KvAdapta";
       description = ''
-        Package providing Kvantum. This package will be installed to your
-        profile. If `null` then Kvantum is assumed to already be available in
-        your profile.
+        The Kvantum theme to use
       '';
     };
 
-    theme = {
-      name = mkOption {
-        type = types.str;
-        description = ''
-          The active Kvantum theme name.
-        '';
-      };
-
-      package = mkOption {
-        type = types.nullOr types.package;
-        default = null;
-        example = literalExpression "pkgs.catppuccin-kvantum";
-        description = ''
-          Package providing the Kvantum theme. This package will be installed
-          to your profile. If `null` then the theme is assumed to already be
-          available in your profile.
-        '';
-      };
+    extraPackages = mkOption {
+      type = with types; listOf package;
+      default = [ ];
+      example = literalExpression ''
+        [
+          pkgs.catppuccin-kvantum
+          pkgs.gruvbox-kvantum
+          pkgs.rose-pine-kvantum
+        ];
+      '';
+      description = ''
+        Additional theme packages to install
+      '';
     };
   };
 
-  config = mkIf cfg.enable {
-    home.packages = mkMerge [
-      [ (mkIf (cfg.package != null) cfg.package) ]
-      [ (mkIf (cfg.theme.package != null) cfg.theme.package) ]
-    ];
+  config = {
+    home.packages = cfg.extraPackages;
 
-    xdg.configFile."./Kvantum/kvantum.kvconfig".text = toKvconfig {
-      General = {
-        theme = cfg.theme.name;
+    xdg.configFile = {
+      "Kvantum/kvantum.kvconfig" = {
+        text = toIni { General.theme = cfg.theme; };
       };
     };
   };

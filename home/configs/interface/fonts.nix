@@ -44,10 +44,11 @@ in
   gtk.font = {
     name = generalFont;
     size = fontSize;
-    package = pkgs.apple-fonts.sf-pro;
   };
 
   programs.plasma.fonts = rec {
+    menu = general;
+    windowTitle = general;
     general = {
       family = generalFont;
       pointSize = fontSize;
@@ -64,7 +65,5 @@ in
       family = generalFont;
       pointSize = (fontSize - 1);
     };
-    menu = general;
-    windowTitle = general;
   };
 }
