@@ -1,10 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib)
     literalExpression
     mkIf
     mkOption
+    mkPackageOption
     types
     ;
 
@@ -15,37 +21,30 @@ in
 
 {
   options.qt.kvantum = {
-    theme = mkOption {
-      type = with types; nullOr str;
-      default = null;
-      example = "KvAdapta";
-      description = ''
-        The Kvantum theme to use
-      '';
-    };
+    theme = {
+      name = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        example = "KvAdapta";
+        description = ''
+          The name of the Kvantum theme to use
+        '';
+      };
 
-    extraPackages = mkOption {
-      type = with types; listOf package;
-      default = [ ];
-      example = literalExpression ''
-        [
-          pkgs.catppuccin-kvantum
-          pkgs.gruvbox-kvantum
-          pkgs.rose-pine-kvantum
-        ];
-      '';
-      description = ''
-        Additional theme packages to install
-      '';
+      package = mkPackageOption pkgs "Kvantum theme" {
+        nullable = true;
+        default = null;
+        example = literalExpression "pkgs.catppuccin-kvantum";
+      };
     };
   };
 
   config = mkIf config.qt.enable {
-    home.packages = cfg.extraPackages;
+    home.packages = [ (mkIf (cfg.theme.package != null) cfg.theme.package) ];
 
     xdg.configFile = {
       "Kvantum/kvantum.kvconfig" = {
-        text = toIni { General.theme = cfg.theme; };
+        text = toIni { General.theme = cfg.theme.name; };
       };
     };
   };

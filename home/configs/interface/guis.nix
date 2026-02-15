@@ -10,21 +10,24 @@ let
   soundTheme = "ocean";
   qtStyle = "kvantum";
   kvantumTheme = "WhiteSurDark";
-  kdeTheme = "WhiteSur-dark";
-  kdePackage = pkgs.whitesur-kde;
+
+  whitesurPackage = pkgs.whitesur-kde;
+  kvantumPackages = with pkgs; [
+    libsForQt5.qtstyleplugin-kvantum
+    kdePackages.qtstyleplugin-kvantum
+  ];
 in
 
 {
-  home.packages = [
-    pkgs.whitesur-gtk-theme
-    kdePackage
-  ];
-
   gtk = rec {
     enable = true;
 
     colorScheme = "dark";
-    theme.name = "WhiteSur-Dark";
+
+    theme = {
+      name = "WhiteSur-Dark";
+      package = pkgs.whitesur-gtk-theme;
+    };
 
     gtk2 = {
       configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
@@ -61,21 +64,17 @@ in
 
     style = {
       name = qtStyle;
-      package = (
-        if globals.standalone
-        then null
-        else with pkgs; [
-          libsForQt5.qtstyleplugin-kvantum
-          kdePackages.qtstyleplugin-kvantum
-        ]
-      );
+      package = if globals.standalone then null else kvantumPackages;
     };
 
-    kvantum.theme = kvantumTheme;
+    kvantum.theme = {
+      name = kvantumTheme;
+      package = whitesurPackage;
+    };
   };
 
   programs.plasma.workspace = {
-    theme = kdeTheme;
+    theme = "WhiteSur-dark";
     widgetStyle = qtStyle;
     colorScheme = kvantumTheme;
     soundTheme = soundTheme;
@@ -83,7 +82,7 @@ in
 
   xdg.configFile = {
     "Kvantum/WhiteSur" = lib.mkIf globals.standalone {
-      source = "${kdePackage}/share/Kvantum/WhiteSur";
+      source = "${whitesurPackage}/share/Kvantum/WhiteSur";
     };
   };
 }
