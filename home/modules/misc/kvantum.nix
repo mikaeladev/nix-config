@@ -1,7 +1,12 @@
 { config, lib, ... }:
 
 let
-  inherit (lib) literalExpression mkOption types;
+  inherit (lib)
+    literalExpression
+    mkIf
+    mkOption
+    types
+    ;
 
   cfg = config.qt.kvantum;
 
@@ -35,7 +40,7 @@ in
     };
   };
 
-  config = {
+  config = mkIf config.qt.enable {
     home.packages = cfg.extraPackages;
 
     xdg.configFile = {
