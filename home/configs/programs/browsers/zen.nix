@@ -6,11 +6,8 @@
 }:
 
 let
-  inherit (config.lib.custom) wrapGraphics wrapHome;
-in
+  inherit (config.lib.custom) wrapGraphics;
 
-let
-  zenHome = "${config.xdg.stateHome}/zen-home";
   zenProfiles = "${config.home.homeDirectory}/storage/zen/profiles";
   zenPackage = inputs.zen-browser.packages.${pkgs.stdenv.system}.beta;
 in
@@ -20,17 +17,12 @@ in
 
   programs.zen-browser = {
     enable = true;
-
-    package = wrapHome {
-      package = wrapGraphics zenPackage;
-      newHome = zenHome;
-    };
-
+    package = wrapGraphics zenPackage;
     profiles = { };
   };
 
-  home.file = {
-    "${zenHome}/.zen/profiles.ini".text = ''
+  xdg.configFile = {
+    "zen/profiles.ini".text = ''
       [Profile1]
       IsRelative=0
       Name=private
@@ -51,7 +43,7 @@ in
       Locked=1
     '';
 
-    "${zenHome}/.zen/installs.ini".text = ''
+    "zen/installs.ini".text = ''
       [0]
       Default=${zenProfiles}/home
       Locked=1
