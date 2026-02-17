@@ -14,7 +14,6 @@ in
     with pkgs;
     [
       agenix
-      bun
       nodejs
       pnpm
       (rust-bin.stable.latest.default.override { extensions = [ "rust-src" ]; })

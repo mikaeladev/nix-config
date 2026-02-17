@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./bun.nix
     ./fastfetch.nix
     ./ssh.nix
     ./superfile.nix
