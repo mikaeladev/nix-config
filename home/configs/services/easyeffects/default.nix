@@ -1,13 +1,8 @@
-{ config, pkgs, ... }:
-
-let
-  inherit (config.lib.custom) wrapGraphics;
-in
+{ ... }:
 
 {
   services.easyeffects = {
     enable = true;
-    package = wrapGraphics pkgs.easyeffects;
     preset = "perfect eq + bass boost";
   };
 

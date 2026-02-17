@@ -1,13 +1,12 @@
 { config, pkgs, ... }:
 
 let
-  inherit (config.lib.custom) updateDesktopFileValue wrapGraphics;
+  inherit (config.lib.custom) updateDesktopFileValue;
 in
 
 {
   programs.vesktop = {
     enable = true;
-    package = wrapGraphics pkgs.vesktop;
 
     settings = {
       discordBranch = "stable";

@@ -1,14 +1,12 @@
 { config, pkgs, ... }:
 
 let
-  inherit (config.lib.custom) updateDesktopFileValue wrapGraphics;
+  inherit (config.lib.custom) updateDesktopFileValue;
 in
 
 {
   programs.zapzap = {
     enable = true;
-
-    package = wrapGraphics pkgs.zapzap;
 
     settings = {
       notification.donation_message = true;

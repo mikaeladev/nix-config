@@ -1,16 +1,13 @@
 {
   config,
   globals,
-  lib,
   pkgs,
   ...
 }:
 
 let
-  inherit (lib) optionals;
-
-  inherit (config.xdg) configHome stateHome;
-  inherit (config.lib.custom) wrapHome wrapPackage wrapStandaloneBin;
+  inherit (config.xdg) stateHome;
+  inherit (config.lib.custom) wrapHome wrapStandaloneBin;
 
   steamHome = "${stateHome}/steam-home";
   steamApps = "${config.home.homeDirectory}/storage/steam/steamapps";
@@ -28,12 +25,6 @@ in
       package = (
         if globals.standalone then wrapStandaloneBin "/usr/bin/steam" else pkgs.steam
       );
-    })
-  ]
-  ++ optionals globals.standalone [
-    (wrapPackage {
-      flags."--config" = "${configHome}/nvidia/settings";
-      package = wrapStandaloneBin "/usr/bin/nvidia-settings";
     })
   ];
 

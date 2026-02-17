@@ -1,14 +1,4 @@
-{
-  config,
-  globals,
-  inputs,
-  lib,
-  ...
-}:
-
-let
-  inherit (lib) mkIf optionals;
-in
+{ globals, inputs, ... }:
 
 {
   imports = [
@@ -24,11 +14,6 @@ in
     preferXdgDirectories = true;
     shell.enableZshIntegration = true;
 
-    # this is set on nixos with `environment.localBinInPath`
-    sessionPath = optionals globals.standalone [
-      "${config.home.homeDirectory}/.local/bin"
-    ];
-
     stateVersion = "25.05"; # do not change
   };
 
@@ -37,10 +22,5 @@ in
   programs.home-manager.enable = true;
   programs.plasma.enable = true;
 
-  targets.genericLinux.nixGL = mkIf globals.standalone {
-    packages = inputs.nixGL.packages;
-    defaultWrapper = "nvidia";
-    installScripts = [ "nvidia" ];
-    vulkan.enable = true;
-  };
+  targets.genericLinux.enable = globals.standalone;
 }

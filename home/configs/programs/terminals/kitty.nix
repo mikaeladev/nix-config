@@ -1,13 +1,8 @@
-{ config, pkgs, ... }:
-
-let
-  inherit (config.lib.custom) wrapGraphics;
-in
+{ ... }:
 
 {
   programs.kitty = {
     enable = true;
-    package = wrapGraphics pkgs.kitty;
 
     themeFile = "kanagawabones";
 

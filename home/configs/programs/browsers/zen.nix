@@ -1,13 +1,6 @@
-{
-  config,
-  inputs,
-  pkgs,
-  ...
-}:
+{ config, inputs, ... }:
 
 let
-  inherit (config.lib.custom) wrapGraphics;
-
   zenProfiles = "${config.home.homeDirectory}/storage/zen/profiles";
 in
 
@@ -16,7 +9,6 @@ in
 
   programs.zen-browser = {
     enable = true;
-    package = wrapGraphics pkgs.zen-browser;
     profiles = { };
   };
 

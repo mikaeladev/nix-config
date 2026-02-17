@@ -45,10 +45,10 @@ in
     configPath = "${thunderbirdHome}/.thunderbird";
     nativeMessagingHostsPath = "${thunderbirdHome}/.mozilla/native-messaging-hosts";
 
-    package = wrapGraphics (wrapHome {
-      package = pkgs.thunderbird;
+    package = wrapHome {
+      package = wrapGraphics pkgs.thunderbird;
       newHome = thunderbirdHome;
-    });
+    };
 
     profiles.personal = {
       isDefault = true;

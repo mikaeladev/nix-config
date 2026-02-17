@@ -1,23 +1,14 @@
-{
-  config,
-  inputs,
-  pkgs,
-  ...
-}:
+{ inputs, pkgs, ... }:
 
 let
-  inherit (config.lib.custom) wrapGraphics;
-
   spicePkgs = inputs.spicetify.legacyPackages.${pkgs.stdenv.system};
 in
 
 {
   imports = [ inputs.spicetify.homeManagerModules.default ];
 
-  home.packages = [ (wrapGraphics config.programs.spicetify.spicedSpotify) ];
-
   programs.spicetify = {
-    enable = false;
+    enable = true;
     wayland = true;
     windowManagerPatch = true;
 

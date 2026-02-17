@@ -1,21 +1,9 @@
-{
-  config,
-  globals,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, pkgs, ... }:
 
 let
   soundTheme = "ocean";
   qtStyle = "kvantum";
   kvantumTheme = "WhiteSurDark";
-
-  whitesurPackage = pkgs.whitesur-kde;
-  kvantumPackages = with pkgs; [
-    libsForQt5.qtstyleplugin-kvantum
-    kdePackages.qtstyleplugin-kvantum
-  ];
 in
 
 {
@@ -64,12 +52,15 @@ in
 
     style = {
       name = qtStyle;
-      package = if globals.standalone then null else kvantumPackages;
+      package = with pkgs; [
+        libsForQt5.qtstyleplugin-kvantum
+        kdePackages.qtstyleplugin-kvantum
+      ];
     };
 
     kvantum.theme = {
       name = kvantumTheme;
-      package = whitesurPackage;
+      package = pkgs.whitesur-kde;
     };
   };
 
@@ -78,11 +69,5 @@ in
     widgetStyle = qtStyle;
     colorScheme = kvantumTheme;
     soundTheme = soundTheme;
-  };
-
-  xdg.configFile = {
-    "Kvantum/WhiteSur" = lib.mkIf globals.standalone {
-      source = "${whitesurPackage}/share/Kvantum/WhiteSur";
-    };
   };
 }

@@ -1,13 +1,6 @@
-{
-  config,
-  lib,
-  pkgs-stable,
-  ...
-}:
+{ config, lib, ... }:
 
 let
-  inherit (config.lib.custom) wrapGraphics;
-
   storageDrive = "${config.home.homeDirectory}/storage";
   prismStorage = "${storageDrive}/prism";
 in
@@ -15,7 +8,6 @@ in
 {
   programs.prismlauncher = {
     enable = true;
-    package = wrapGraphics pkgs-stable.prismlauncher;
 
     icons = [
       ./assets/fabulously-optimised.png
