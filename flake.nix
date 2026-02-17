@@ -139,7 +139,7 @@
     {
       formatter.${system} = treefmtEval.config.build.wrapper;
 
-      overlays.default = import ./pkgs { inherit inputs system; };
+      overlays.default = import ./pkgs { inherit inputs; };
 
       nixosConfigurations.desktop = mkNixosConfig {
         lib = nixosLib;

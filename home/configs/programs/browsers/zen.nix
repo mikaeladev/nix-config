@@ -9,15 +9,14 @@ let
   inherit (config.lib.custom) wrapGraphics;
 
   zenProfiles = "${config.home.homeDirectory}/storage/zen/profiles";
-  zenPackage = inputs.zen-browser.packages.${pkgs.stdenv.system}.beta;
 in
 
 {
-  imports = [ inputs.zen-browser.homeModules.beta ];
+  imports = [ inputs.zen-browser.homeModules.default ];
 
   programs.zen-browser = {
     enable = true;
-    package = wrapGraphics zenPackage;
+    package = wrapGraphics pkgs.zen-browser;
     profiles = { };
   };
 
