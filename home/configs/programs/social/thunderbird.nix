@@ -1,17 +1,14 @@
 {
   config,
-  globals,
   lib,
   pkgs,
   ...
 }:
 
 let
-  inherit (globals.mainuser.xdg) stateHome;
-
   inherit (config.lib.custom) wrapGraphics wrapHome mkThunderbirdAddon;
 
-  thunderbirdHome = "${stateHome}/thunderbird-home";
+  thunderbirdHome = "${config.xdg.stateHome}/thunderbird-home";
 
   minimizeOnClose = mkThunderbirdAddon {
     name = "minimize-on-close";
