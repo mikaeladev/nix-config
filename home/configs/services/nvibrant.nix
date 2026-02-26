@@ -5,6 +5,9 @@
 
   services.nvibrant = {
     enable = true;
-    vibrancy = [ "125%" ];
+    vibrancy = [
+      "125%"
+      "125%"
+    ];
   };
 }
