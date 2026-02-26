@@ -9,14 +9,14 @@ in
 {
   home.packages = [
     # general fonts
-    pkgs.apple-fonts.sf-pro
+    pkgs.apple-sf-pro
 
     # monospace fonts
     pkgs.jetbrains-mono
     pkgs.nerd-fonts.jetbrains-mono
 
     # emoji fonts
-    pkgs.apple-fonts.emoji
+    pkgs.apple-emoji
   ];
 
   fonts.fontconfig = {

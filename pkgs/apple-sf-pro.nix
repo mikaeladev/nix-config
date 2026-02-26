@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, ... }:
 
 stdenv.mkDerivation {
-  pname = "apple-fonts-sf-pro";
+  pname = "apple-sf-pro";
   version = "1.0.0";
 
   src = fetchFromGitHub {

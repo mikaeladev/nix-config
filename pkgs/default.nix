@@ -11,7 +11,8 @@ let
 in
 
 {
-  apple-fonts = import ./apple-fonts args;
+  apple-emoji = import ./apple-emoji.nix args;
+  apple-sf-pro = import ./apple-sf-pro.nix args;
   pixel-cursors = inputs.pixel-cursors.packages.${system}.default;
   zen-browser = inputs.zen-browser.packages.${system}.default;
 }

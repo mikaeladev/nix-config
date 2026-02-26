@@ -6,7 +6,7 @@ let
 in
 
 stdenv.mkDerivation {
-  pname = "apple-fonts-emoji";
+  pname = "apple-emoji";
   version = "${release}.0";
 
   src = fetchurl {
