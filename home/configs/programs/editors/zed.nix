@@ -1,13 +1,13 @@
-{ pkgs-stable, ... }:
+{ pkgs, ... }:
 
 {
   programs.zed-editor = {
     enable = true;
 
-    extraPackages = [
-      pkgs-stable.nil
-      pkgs-stable.nixd
-      pkgs-stable.shellcheck
+    extraPackages = with pkgs; [
+      nil
+      nixd
+      shellcheck
     ];
 
     # immutable config files
@@ -79,5 +79,4 @@
       "xml"
     ];
   };
-
 }

@@ -8,8 +8,7 @@
   ];
 
   home = {
-    username = globals.mainuser.username;
-    homeDirectory = "/home/${globals.mainuser.username}";
+    inherit (globals.mainuser) homeDirectory username;
 
     preferXdgDirectories = true;
     shell.enableZshIntegration = true;

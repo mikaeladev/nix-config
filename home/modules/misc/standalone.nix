@@ -5,7 +5,6 @@
   inputs,
   lib,
   pkgs,
-  pkgs-stable,
   ...
 }:
 
@@ -40,10 +39,10 @@ in
       kitty.package = wrapGraphics pkgs.kitty;
       krita.package = wrapGraphics pkgs.krita;
       obs-studio.package = wrapGraphics pkgs.obs-studio;
-      prismlauncher.package = wrapGraphics pkgs-stable.prismlauncher;
+      prismlauncher.package = wrapGraphics pkgs.prismlauncher;
       vesktop.package = wrapGraphics pkgs.vesktop;
       zapzap.package = wrapGraphics pkgs.zapzap;
-      zed-editor.package = wrapGraphics pkgs-stable.zed-editor;
+      zed-editor.package = wrapGraphics pkgs.zed-editor;
       zen-browser.package = wrapGraphics pkgs.zen-browser;
     };
 

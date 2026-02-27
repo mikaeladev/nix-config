@@ -1,4 +1,16 @@
-{ globals, pkgs, ... }:
+{
+  globals,
+  lib,
+  pkgs,
+  ...
+}:
+
+let
+  inherit (globals) mkXdgBaseDirectoryPaths;
+  inherit (lib) removePrefix;
+
+  lySessionLogPathBase = removePrefix "/" (mkXdgBaseDirectoryPaths "").stateHome;
+in
 
 {
   boot = {
@@ -33,7 +45,7 @@
       error_fg = "0x01AE5852";
       error_bg = bg;
       border_fg = fg;
-      session_log = "${globals.mainuser.xdg.stateHome}/ly-session.log";
+      session_log = "${lySessionLogPathBase}/ly-session.log";
       text_in_center = true;
     };
   };

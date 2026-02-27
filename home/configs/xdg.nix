@@ -7,6 +7,7 @@
 
 let
   inherit (lib) mapAttrs;
+  inherit (globals) mainuser mkXdgBaseDirectoryPaths;
 
   withExtension =
     extension: attrs: mapAttrs (_: value: value + ".${extension}") attrs;
@@ -105,7 +106,7 @@ in
 
 {
   xdg = {
-    inherit (globals.mainuser.xdg)
+    inherit (mkXdgBaseDirectoryPaths mainuser.homeDirectory)
       cacheHome
       configHome
       dataHome

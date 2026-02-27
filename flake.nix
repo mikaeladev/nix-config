@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
 
     flatpaks.url = "github:gmodena/nix-flatpak";
 
@@ -33,7 +32,7 @@
 
     treefmt = {
       url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     wrappers = {
@@ -45,27 +44,27 @@
 
     nvibrant = {
       url = "github:mikaeladev/nix-nvibrant";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     pixel-cursors = {
       url = "github:mikaeladev/pixel-cursors";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     rust = {
       url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     spicetify = {
       url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake/beta";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
   };
@@ -74,7 +73,6 @@
     inputs@{
       self,
       nixpkgs,
-      nixpkgs-stable,
       agenix,
       home-manager,
       treefmt,
@@ -86,7 +84,7 @@
     let
       system = "x86_64-linux";
 
-      pkgs-unstable = import nixpkgs {
+      pkgs = import nixpkgs {
         inherit system;
 
         config = {
@@ -102,38 +100,24 @@
         ];
       };
 
-      pkgs-stable = import nixpkgs-stable {
-        inherit system;
-
-        config = {
-          allowUnfree = true;
-          nvidia.acceptLicense = true;
-        };
-      };
-
-      globals = rec {
-        mainuser = {
-          username = "mainuser";
-          nickname = "mikaela";
-
-          xdg = {
-            cacheHome = "/home/${mainuser.username}/.local/var/cache";
-            configHome = "/home/${mainuser.username}/.local/etc";
-            dataHome = "/home/${mainuser.username}/.local/share";
-            stateHome = "/home/${mainuser.username}/.local/var/state";
-          };
-        };
-      };
-
-      nixosLib = import ./nixos/modules/lib/extend-lib.nix {
-        inherit globals inputs;
-        pkgs = pkgs-unstable;
-      };
-
-      mkNixosConfig = nixpkgs.lib.nixosSystem;
+      mkNixosConfig = pkgs.lib.nixosSystem;
       mkHomeConfig = home-manager.lib.homeManagerConfiguration;
 
-      treefmtEval = treefmt.lib.evalModule pkgs-stable ./treefmt.nix;
+      treefmtEval = treefmt.lib.evalModule pkgs ./treefmt.nix;
+
+      globals = {
+        mainuser = {
+          homeDirectory = "/home/mainuser";
+          username = "mainuser";
+          nickname = "mikaela";
+        };
+        mkXdgBaseDirectoryPaths = homeDir: {
+          cacheHome = "${homeDir}/.local/var/cache";
+          configHome = "${homeDir}/.local/etc";
+          dataHome = "${homeDir}/.local/share";
+          stateHome = "${homeDir}/.local/var/state";
+        };
+      };
     in
 
     {
@@ -142,11 +126,10 @@
       overlays.default = import ./pkgs { inherit inputs; };
 
       nixosConfigurations.desktop = mkNixosConfig {
-        lib = nixosLib;
         modules = [ ./nixos ];
-        pkgs = pkgs-unstable;
+        pkgs = pkgs;
         specialArgs = {
-          inherit inputs pkgs-stable;
+          inherit inputs;
           globals = globals // {
             standalone = false;
           };
@@ -155,9 +138,9 @@
 
       homeConfigurations.mainuser = mkHomeConfig {
         modules = [ ./home ];
-        pkgs = pkgs-unstable;
+        pkgs = pkgs;
         extraSpecialArgs = {
-          inherit inputs pkgs-stable;
+          inherit inputs;
           globals = globals // {
             standalone = true;
           };
