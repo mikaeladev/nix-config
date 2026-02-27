@@ -150,6 +150,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-treefmt": {
+      "locked": {
+        "lastModified": 1770107345,
+        "narHash": "sha256-tbS0Ebx2PiA1FRW8mt8oejR0qMXmziJmPaU1d4kYY9g=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "4533d9293756b63904b7238acb84ac8fe4c8c2c4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "4533d9293756b63904b7238acb84ac8fe4c8c2c4",
+        "type": "github"
+      }
+    },
     "nvibrant": {
       "inputs": {
         "nixpkgs": [
@@ -223,6 +239,7 @@
         "home-manager": "home-manager_2",
         "nixGL": "nixGL",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-treefmt": "nixpkgs-treefmt",
         "nvibrant": "nvibrant",
         "pixel-cursors": "pixel-cursors",
         "plasma-manager": "plasma-manager",
@@ -364,7 +381,7 @@
     "treefmt_2": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs"
+          "nixpkgs-treefmt"
         ]
       },
       "locked": {
