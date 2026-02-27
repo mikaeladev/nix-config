@@ -12,7 +12,7 @@ let
 in
 
 {
-  programs.zsh.enable = true;
+  imports = [ inputs.home-manager.nixosModules.default ];
 
   users.users = {
     root = {
@@ -22,7 +22,7 @@ in
       uid = 0;
     };
 
-    "${mainuser.username}" = {
+    ${mainuser.username} = {
       isNormalUser = true;
       description = mainuser.nickname;
       hashedPasswordFile = secrets."passwords/mainuser".path;
@@ -39,7 +39,8 @@ in
     useGlobalPkgs = false;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit globals inputs pkgs; };
+
     users.${mainuser.username} = import ../../home;
+    extraSpecialArgs = { inherit globals inputs pkgs; };
   };
 }

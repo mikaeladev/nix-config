@@ -1,7 +1,7 @@
 { config, lib, ... }:
 
 let
-  inherit (lib.custom.networking)
+  inherit (lib.custom)
     mkEthernetConfig
     mkWifiConfig
     mkSurfsharkConfig
@@ -11,7 +11,7 @@ in
 
 {
   networking = {
-    hostName = "nixos-desktop";
+    hostName = "nixos";
 
     networkmanager = {
       enable = true;

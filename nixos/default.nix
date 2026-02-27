@@ -1,25 +1,14 @@
-{ inputs, ... }:
-
 {
   imports = [
-    inputs.agenix.nixosModules.default
-    inputs.home-manager.nixosModules.default
-    ./hardware.nix
     ./configs
+    ./modules
   ];
-
-  age.secrets = {
-    "networks".file = ../secrets/networks.age;
-    "passwords/root".file = ../secrets/passwords/root.age;
-    "passwords/mainuser".file = ../secrets/passwords/mainuser.age;
-  };
 
   nix.settings = {
     experimental-features = [
       "nix-command"
       "flakes"
     ];
-
     trusted-users = [
       "root"
       "@wheel"

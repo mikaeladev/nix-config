@@ -1,27 +1,13 @@
 { pkgs, ... }:
 
 {
-  imports = [ ./desktops/plasma.nix ];
-
-  environment = {
-    localBinInPath = true;
-
-    systemPackages = [
-      pkgs.file
-      pkgs.kitty
-      pkgs.unzip
-      pkgs.vim
-    ];
-
-    variables = {
-      EDITOR = "vim";
-      PAGER = "less";
-    };
-  };
+  desktops.plasma.enable = true;
 
   programs = {
     dconf.enable = true;
     git.enable = true;
+    xwayland.enable = true;
+    zsh.enable = true;
 
     steam = {
       enable = true;
@@ -32,5 +18,21 @@
   services = {
     flatpak.enable = true;
     openssh.enable = true;
+  };
+
+  environment = {
+    localBinInPath = true;
+
+    systemPackages = with pkgs; [
+      file
+      kitty
+      unzip
+      vim
+    ];
+
+    variables = {
+      EDITOR = "vim";
+      PAGER = "less";
+    };
   };
 }

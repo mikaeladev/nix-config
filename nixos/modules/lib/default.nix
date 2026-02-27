@@ -1,3 +1,1 @@
-args:
-
-{ networking = import ./networking.nix args; }
+{ imports = [ ./networks.nix ]; }

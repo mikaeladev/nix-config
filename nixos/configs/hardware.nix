@@ -1,4 +1,4 @@
-{ globals, ... }:
+{ globals, pkgs, ... }:
 
 let
   efiDevice = "/dev/disk/by-uuid/B18D-67CD";
@@ -7,6 +7,25 @@ let
 in
 
 {
+  nixpkgs.hostPlatform = pkgs.stdenv.hostPlatform.system;
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware = {
+    graphics.enable = true;
+    nvidia.open = false;
+    cpu.amd.updateMicrocode = false;
+  };
+
+  swapDevices = [ ];
+
+  zramSwap = {
+    enable = true;
+    priority = 100;
+    memoryPercent = 25; # 8G
+    algorithm = "zstd";
+  };
+
   fileSystems = {
     "/" = {
       device = nixosDevice;
@@ -32,7 +51,7 @@ in
       ];
     };
 
-    "/home/${globals.mainuser.username}/storage" = {
+    "${globals.mainuser.homeDirectory}/storage" = {
       device = storageDevice;
       fsType = "btrfs";
       options = [

@@ -32,7 +32,7 @@ let
 in
 
 {
-  mkEthernetConfig =
+  lib.custom.mkEthernetConfig =
     { name, uuid }:
     {
       inherit ipv4 ipv6;
@@ -48,7 +48,7 @@ in
       };
     };
 
-  mkWifiConfig =
+  lib.custom.mkWifiConfig =
     {
       name,
       uuid,
@@ -76,7 +76,7 @@ in
       };
     };
 
-  mkSurfsharkConfig =
+  lib.custom.mkSurfsharkConfig =
     {
       name,
       uuid,
@@ -119,7 +119,7 @@ in
       };
     };
 
-  mkNameserverConfig =
+  lib.custom.mkNameserverConfig =
     type:
     (
       if type == "ipv4" then

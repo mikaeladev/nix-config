@@ -14,10 +14,22 @@ in
 
 {
   boot = {
-    # use standard linux kernel
     kernelPackages = pkgs.linuxPackages_latest;
+    kernelModules = [ "kvm-amd" ];
+    extraModulePackages = [ ];
 
-    # use systemd boot loader
+    initrd = {
+      kernelModules = [ ];
+      availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+      ];
+    };
+
     loader = {
       timeout = 10;
       efi.canTouchEfiVariables = true;
@@ -29,7 +41,6 @@ in
       };
     };
 
-    # use tmpfs for /tmp
     tmp = {
       useTmpfs = true;
       tmpfsSize = "30%";

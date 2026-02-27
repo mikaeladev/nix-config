@@ -1,15 +1,12 @@
-{ ... }:
-
 {
   imports = [
     ./audio.nix
     ./boot.nix
     ./environment.nix
-    ./filesystem.nix
-    ./graphics.nix
+    ./hardware.nix
     ./locale.nix
-    ./memory.nix
-    ./networking.nix
+    ./networks.nix
+    ./secrets.nix
     ./users.nix
   ];
 }
