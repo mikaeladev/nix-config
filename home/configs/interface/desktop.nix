@@ -2,13 +2,13 @@
 
 let
   wallpaperPath = "${config.xdg.dataHome}/wallpapers/current.png";
-  
+
   # spacer = {
   #   panelSpacer = {
   #     settings.General.expanding = true;
   #   };
   # };
-  
+
   # separator = {
   #   name = "zayron.simple.separator"; # todo: add this to pkgs
   #   config = {
@@ -20,7 +20,7 @@ let
   # };
 in
 
-{ 
+{
   # programs.plasma = {
   #   panels = [
   #     {
@@ -30,7 +30,7 @@ in
   #       location = "top";
   #       opacity = "translucent";
   #       screen = "all";
-        
+
   #       widgets = [
   #         {
   #           name = "org.kde.plasma.weather";
@@ -84,7 +84,7 @@ in
   #       location = "bottom";
   #       opacity = "translucent";
   #       screen = "all";
-        
+
   #       widgets = [
   #         {
   #           kickerdash = {
@@ -110,10 +110,10 @@ in
   #       ];
   #     }
   #   ];
-    
+
   #   workspace.wallpaper = wallpaperPath;
   # };
-  
+
   home.file.${wallpaperPath} = {
     source = ./assets/wallpaper.png;
   };
