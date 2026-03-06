@@ -53,11 +53,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    rust = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     spicetify = {
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -79,7 +74,6 @@
       home-manager,
       treefmt,
       nvibrant,
-      rust,
       ...
     }:
 
@@ -97,7 +91,6 @@
         overlays = [
           agenix.overlays.default
           nvibrant.overlays.default
-          rust.overlays.default
           self.overlays.default
         ];
       };
