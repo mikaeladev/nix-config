@@ -40,6 +40,7 @@ in
       krita.package = wrapGraphics pkgs.krita;
       obs-studio.package = wrapGraphics pkgs.obs-studio;
       prismlauncher.package = wrapGraphics pkgs.prismlauncher;
+      rofi.package = wrapGraphics pkgs.rofi;
       vesktop.package = wrapGraphics pkgs.vesktop;
       zapzap.package = wrapGraphics pkgs.zapzap;
       zed-editor.package = wrapGraphics pkgs.zed-editor;

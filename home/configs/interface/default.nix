@@ -1,5 +1,6 @@
 {
   imports = [
+    ./rofi
     ./desktop.nix
     ./fonts.nix
     ./guis.nix

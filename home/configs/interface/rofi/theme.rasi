@@ -1,0 +1,125 @@
+configuration {
+  drun-display-format: "{name}\n[<i>{comment}</i>]";
+}
+
+* {
+  clr-bg: #111011;
+  clr-fg: #fefff3;
+  clr-border: #432a3d;
+  clr-selected-bg: #5e2f44;
+  clr-selected-fg: @clr-fg;
+  clr-alternate-bg: #261d26;
+  clr-alternate-fg: @clr-fg;
+
+  val-border: 2px;
+  val-padding: 12px;
+  val-spacing: 8px;
+
+  font: "JetBrains Mono 14px";
+  border-color: @clr-border;
+  background-color: @clr-bg;
+  text-color: @clr-fg;
+}
+
+window {
+  width: 800px;
+  border: @val-border;
+  border-color: @clr-bg;
+  padding: 0;
+  children: [
+    mainbox
+  ];
+}
+
+mainbox {
+  border: 0;
+  padding: 0;
+  spacing: @val-border;
+  children: [
+    inputbar,
+    listview,
+    message
+  ];
+}
+
+inputbar {
+  border: @val-border;
+  padding: @val-padding;
+  spacing: 0;
+  cursor: text;
+  children: [
+    entry
+  ];
+}
+
+entry {
+  spacing: 0;
+  placeholder: "Search...";
+  cursor: inherit;
+}
+
+listview {
+  border: @val-border;
+  padding: @val-padding;
+  spacing: @val-spacing;
+  scrollbar: true;
+  lines: 8;
+}
+
+scrollbar {
+  background-color: @clr-alternate-bg;
+  border: 0;
+  padding: 0;
+  handle-color: @clr-border;
+  handle-width: 8px;
+  width: 4px;
+}
+
+element {
+  border: 0;
+  padding: 4px;
+  spacing: @val-spacing;
+  orientation: horizontal;
+  cursor: pointer;
+  children: [
+    element-icon,
+    element-text
+  ];
+}
+
+element-text,
+element-icon {
+  background-color: inherit;
+  text-color: inherit;
+  cursor: inherit;
+}
+
+element-text {
+  vertical-align: 0.5;
+}
+
+element-icon {
+  size: 2em;
+}
+
+element.selected {
+  background-color: @clr-selected-bg;
+  text-color: @clr-selected-fg;
+}
+
+element.alternate {
+  background-color: @clr-alternate-bg;
+  text-color: @clr-alternate-fg;
+}
+
+message {
+  border: @val-border;
+  padding: @val-padding;
+  children: [
+    textbox
+  ];
+}
+
+textbox {
+  highlight: bold italic;
+}
