@@ -1,6 +1,8 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
+  imports = [ inputs.zed-extensions.homeManagerModules.default ];
+
   programs.zed-editor = {
     enable = true;
 
@@ -64,32 +66,61 @@
         metrics = false;
       };
     };
+  };
 
-    extensions = [
+  programs.zed-editor-extensions = {
+    enable = true;
+    packages = with pkgs.zed-extensions; [
       # languages
-      "astro"
-      "basher"
-      "desktop"
-      "git-firefly"
-      "html"
-      "ini"
-      "log"
-      "lua"
-      "make"
-      "neocmake"
-      "nix"
-      "qml"
-      "scheme"
-      "scss"
-      "toml"
-      "xml"
+      astro
+      basher
+      desktop
+      git-firefly
+      html
+      ini
+      log
+      lua
+      make
+      neocmake
+      nix
+      qml
+      scheme
+      scss
+      toml
+      xml
 
       # themes
-      "one-dark-pro"
-      "charmed-icons"
+      one-dark-pro
+      charmed-icons
 
       # other bits
-      "discord-presence"
+      discord-presence
+
+      (pkgs.buildZedExtension (finalAttrs: {
+        name = "rasi";
+        version = "83f5e3befc28a7a4526648ff6a047a381132739b";
+
+        src = pkgs.fetchFromGitHub {
+          owner = "mikaeladev";
+          repo = "zed-rasi";
+          rev = finalAttrs.version;
+          hash = "sha256-eQpLcRnu4hXLKNw9rlYV7ClVz1aiftXQhJAHukrjf+g=";
+        };
+
+        grammars = [
+          (pkgs.buildZedGrammar (finalAttrs: {
+            name = "rasi";
+            version = "e735c6881d8b475aaa4ef8f0a2bdfd825b438143";
+
+            src = pkgs.fetchFromGitHub {
+              owner = "Fymyte";
+              repo = "tree-sitter-rasi";
+              rev = finalAttrs.version;
+              hash = "sha256-MERNUroM1ndV6TtXYGg0AmXRtNlNWphVx32TzgMUnac=";
+            };
+          }))
+        ];
+      }))
     ];
   };
 }

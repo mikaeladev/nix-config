@@ -58,6 +58,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    zed-extensions = {
+      url = "github:DuskSystems/nix-zed-extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-unstable.follows = "nixpkgs";
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake/beta";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -74,6 +80,7 @@
       home-manager,
       treefmt,
       nvibrant,
+      zed-extensions,
       ...
     }:
 
@@ -91,6 +98,7 @@
         overlays = [
           agenix.overlays.default
           nvibrant.overlays.default
+          zed-extensions.overlays.default
           self.overlays.default
         ];
       };
