@@ -1,7 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib) getExe;
+  inherit (pkgs) writeShellScriptBin;
 in
 
 {
@@ -12,4 +18,16 @@ in
     terminal = getExe config.programs.kitty.package;
     theme = ./theme.rasi;
   };
+
+  home.packages = [
+    (writeShellScriptBin "toggle-rofi-launcher" ''
+      PID=$(pgrep -x rofi)
+
+      if [ $PID ]; then
+        kill $PID
+      else
+        rofi -show drun
+      fi
+    '')
+  ];
 }
