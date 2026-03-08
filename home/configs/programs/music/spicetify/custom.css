@@ -1,7 +1,7 @@
 /* theme settings */
 
 :root {
-  --font-family: "JetBrainsMono Nerd Font", monospace;
+  --font-family: "JetBrains Mono", monospace;
   --font-size: 14px;
   --font-weight: 400;
   --line-height: 1.2;

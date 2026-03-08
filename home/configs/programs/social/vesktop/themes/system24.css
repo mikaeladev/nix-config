@@ -15,7 +15,7 @@
 
 body {
   /* font */
-  --font: "JetBrainsMono Nerd Font", monospace;
+  --font: "JetBrains Mono", monospace;
   --code-font: var(--font);
   --font-size: 14px;
   --font-weight: 400;
