@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./interface
+    ./desktop
     ./programs
     ./services
     ./systemd.nix
