@@ -443,11 +443,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1772768972,
-        "narHash": "sha256-dKLCM76XmRI9hEAvBrP3Fhr0bgWpdBkBd8y8YSmnU1E=",
+        "lastModified": 1773114590,
+        "narHash": "sha256-48UyUDY5NVDoydH6rlP7nLwxaPBBCThtcqsoPOdchHQ=",
         "owner": "DuskSystems",
         "repo": "nix-zed-extensions",
-        "rev": "a6196329438c8377bfd033a828f03cf0447eab4e",
+        "rev": "02f6b5522fa2d686448314f4e6df1d3ad7acd2d8",
         "type": "github"
       },
       "original": {

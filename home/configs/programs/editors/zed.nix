@@ -88,6 +88,7 @@
       scss
       toml
       xml
+      yuck
 
       # themes
       one-dark-pro
