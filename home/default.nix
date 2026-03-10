@@ -1,8 +1,7 @@
-{ globals, inputs, ... }:
+{ globals, pkgs, ... }:
 
 {
   imports = [
-    inputs.plasma-manager.homeModules.plasma-manager
     ./configs
     ./modules
   ];
@@ -13,13 +12,20 @@
     preferXdgDirectories = true;
     shell.enableZshIntegration = true;
 
-    stateVersion = "25.05"; # do not change
+    stateVersion = "25.05";
   };
 
-  news.display = "silent"; # SHUTUP
+  news.display = "silent";
+
+  nix = {
+    assumeXdg = true;
+    package = pkgs.nixVersions.latest;
+
+    settings = {
+      download-buffer-size = 524288000; # 500 MiB
+    };
+  };
 
   programs.home-manager.enable = true;
-  programs.plasma.enable = true;
-
   targets.genericLinux.enable = globals.standalone;
 }
