@@ -10,7 +10,6 @@ in
   programs.zen-browser = {
     enable = true;
     profiles = { };
-    suppressXdgMigrationWarning = true;
   };
 
   xdg.configFile = {
