@@ -1,8 +1,5 @@
 { ... }:
 
 {
-  imports = [
-    ./deadlock.nix
-    ./minecraft.nix
-  ];
+  imports = [ ./minecraft.nix ];
 }

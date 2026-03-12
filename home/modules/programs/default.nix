@@ -1,6 +1,3 @@
 {
-  imports = [
-    ./deadlock-mod-manager.nix
-    ./krita.nix
-  ];
+  imports = [ ./krita.nix ];
 }
