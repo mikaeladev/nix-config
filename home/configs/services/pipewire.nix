@@ -19,19 +19,17 @@ in
     enable = true;
     extraConfig = {
       "10-default" = {
+        "default.clock.quantum" = 256;
+        "default.clock.min-quantum" = 32;
+        "default.clock.max-quantum" = 8192;
+
         "default.clock.rate" = 48000;
-
-        "default.clock-default-quantum" = 2048;
-        "default.clock.min-quantum" = 2048;
-        "default.clock.max-quantum" = 4096;
-        "default.clock.quantum-limit" = 4096;
-
         "default.clock.allowed-rates" = [
           44100
-          88200
-          176400
           48000
+          88200
           96000
+          176400
           192000
         ];
       };
