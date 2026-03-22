@@ -61,13 +61,6 @@ in
     # install kvantum through system package manager
     qt.style.package = mkForce null;
 
-    xdg.configFile = {
-      # standalone kvantum wont find themes in nix profiles
-      "Kvantum/WhiteSur" = {
-        source = "${config.qt.kvantum.theme.package}/share/Kvantum/WhiteSur";
-      };
-    };
-
     assertions = [
       {
         assertion = pathExists "/usr/bin/kvantummanager";

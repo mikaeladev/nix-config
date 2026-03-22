@@ -78,9 +78,9 @@ in
   qt = {
     enable = true;
 
-    kvantum.theme = {
-      name = "WhiteSurDark";
-      package = pkgs.whitesur-kde;
+    kvantum = {
+      settings.general.theme = "WhiteSurDark";
+      themes = [ pkgs.whitesur-kde ];
     };
 
     style = {

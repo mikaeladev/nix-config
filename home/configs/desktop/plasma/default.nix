@@ -1,4 +1,9 @@
-{ config, inputs, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
 
 let
   fontName = config.gtk.font.name;
@@ -12,6 +17,13 @@ in
 
 {
   imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
+
+  home.packages = [
+    (pkgs.runCommand "whitesur-kde-minimal" { } ''
+      mkdir -p $out/share
+      ln -s ${pkgs.whitesur-kde}/share/{aurorae,color-schemes,plasma} $out/share
+    '')
+  ];
 
   programs.plasma = {
     enable = true;
@@ -71,9 +83,9 @@ in
     };
 
     workspace = {
+      colorScheme = "WhiteSurDark";
       wallpaper = "${config.xdg.dataHome}/wallpapers/current.png";
       widgetStyle = config.qt.style.name;
-      colorScheme = config.qt.kvantum.theme.name;
       iconTheme = config.gtk.iconTheme.name;
       soundTheme = config.gtk.gtk4.extraConfig.gtk-sound-theme-name;
       cursor = {
