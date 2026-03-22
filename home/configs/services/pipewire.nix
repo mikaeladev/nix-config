@@ -19,19 +19,21 @@ in
     enable = true;
     extraConfig = {
       "10-default" = {
-        "default.clock.quantum" = 256;
-        "default.clock.min-quantum" = 32;
-        "default.clock.max-quantum" = 8192;
+        "context.properties" = {
+          "default.clock.quantum" = 256;
+          "default.clock.min-quantum" = 32;
+          "default.clock.max-quantum" = 8192;
 
-        "default.clock.rate" = 48000;
-        "default.clock.allowed-rates" = [
-          44100
-          48000
-          88200
-          96000
-          176400
-          192000
-        ];
+          "default.clock.rate" = 48000;
+          "default.clock.allowed-rates" = [
+            44100
+            48000
+            88200
+            96000
+            176400
+            192000
+          ];
+        };
       };
     };
 
@@ -51,17 +53,14 @@ in
             })
           ];
         };
-        # prevent audio popping
+        # disable suspend for headset speakers
         "20-disable-suspend" = {
           "monitor.alsa.rules" = [
             {
               actions.update-props = {
                 "session.suspend-timeout-seconds" = 0;
               };
-              matches = [
-                { "node.name" = "~alsa_input.*"; }
-                { "node.name" = "~alsa_output.*"; }
-              ];
+              matches = [ { "node.name" = "alsa_output.pci-0000_0a_00.6.analog-stereo"; } ];
             }
           ];
         };

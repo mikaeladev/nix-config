@@ -1,12 +1,10 @@
-{ ... }:
-
 {
   services.easyeffects = {
     enable = true;
-    preset = "perfect eq + bass boost";
+    preset = "default";
   };
 
-  xdg.configFile."./easyeffects/output" = {
-    source = builtins.toString ./presets/output;
+  xdg.dataFile."easyeffects/output/default.json" = {
+    source = ./presets/output.json;
   };
 }
