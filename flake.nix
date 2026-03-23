@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-treefmt.url = "github:nixos/nixpkgs/4533d9293756b63904b7238acb84ac8fe4c8c2c4";
 
     flatpaks.url = "github:gmodena/nix-flatpak";
 
@@ -33,7 +32,7 @@
 
     treefmt = {
       url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs-treefmt";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     wrappers = {
@@ -61,7 +60,6 @@
     zed-extensions = {
       url = "github:DuskSystems/nix-zed-extensions";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-unstable.follows = "nixpkgs";
     };
 
     zen-browser = {
@@ -75,7 +73,6 @@
     inputs@{
       self,
       nixpkgs,
-      nixpkgs-treefmt,
       agenix,
       home-manager,
       treefmt,
@@ -106,8 +103,7 @@
       mkNixosConfig = pkgs.lib.nixosSystem;
       mkHomeConfig = home-manager.lib.homeManagerConfiguration;
 
-      treefmtPkgs = import nixpkgs-treefmt { inherit system; };
-      treefmtEval = treefmt.lib.evalModule treefmtPkgs ./treefmt.nix;
+      treefmtEval = treefmt.lib.evalModule pkgs ./treefmt.nix;
 
       globals = {
         mainuser = {

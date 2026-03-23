@@ -65,13 +65,16 @@ in
       gtk-toolbar-style = 3; # icons and text alongside each other
     };
 
-    gtk4.extraConfig = {
-      gtk-cursor-blink = true;
-      gtk-cursor-blink-time = 1000;
-      gtk-decoration-layout = "close,minimize,maximize:";
-      gtk-enable-animations = true;
-      gtk-primary-button-warps-slider = true;
-      gtk-sound-theme-name = soundTheme;
+    gtk4 = {
+      theme = config.gtk.theme;
+      extraConfig = {
+        gtk-cursor-blink = true;
+        gtk-cursor-blink-time = 1000;
+        gtk-decoration-layout = "close,minimize,maximize:";
+        gtk-enable-animations = true;
+        gtk-primary-button-warps-slider = true;
+        gtk-sound-theme-name = soundTheme;
+      };
     };
   };
 

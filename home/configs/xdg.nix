@@ -126,6 +126,7 @@ in
     userDirs = with config.home; {
       enable = true;
       createDirectories = true;
+      setSessionVariables = false;
 
       desktop = "${homeDirectory}/desktop";
       download = "${homeDirectory}/downloads";
