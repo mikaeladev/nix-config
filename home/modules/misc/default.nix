@@ -1,6 +1,1 @@
-{
-  imports = [
-    ./kvantum.nix
-    ./standalone.nix
-  ];
-}
+{ imports = [ ./standalone.nix ]; }

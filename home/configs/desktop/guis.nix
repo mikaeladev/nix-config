@@ -82,7 +82,7 @@ in
     enable = true;
 
     kvantum = {
-      settings.general.theme = "WhiteSurDark";
+      settings.General.theme = "WhiteSurDark";
       themes = [ pkgs.whitesur-kde ];
     };
 
