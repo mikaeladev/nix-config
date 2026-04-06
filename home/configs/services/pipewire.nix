@@ -17,7 +17,7 @@ in
 {
   services.pipewire = {
     enable = true;
-    extraConfig = {
+    configs = {
       "10-default" = {
         "context.properties" = {
           "default.clock.rate" = 48000;
@@ -38,7 +38,7 @@ in
 
     wireplumber = {
       enable = true;
-      extraConfig = {
+      configs = {
         # give devices friendly names
         "10-rename-devices" = {
           "monitor.alsa.rules" = [
