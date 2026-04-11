@@ -4,6 +4,5 @@
     ./misc
     ./patches
     ./programs
-    ./services
   ];
 }
