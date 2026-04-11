@@ -86,6 +86,7 @@
       qml
       scheme
       scss
+      tombi
       toml
       xml
       yuck
