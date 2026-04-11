@@ -21,8 +21,6 @@
   };
 
   environment = {
-    localBinInPath = true;
-
     systemPackages = with pkgs; [
       file
       kitty

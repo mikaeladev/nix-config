@@ -29,11 +29,6 @@ in
       })
     ];
 
-    home.sessionPath = [
-      # set on nixos with `environment.localBinInPath`
-      "${config.home.homeDirectory}/.local/bin"
-    ];
-
     programs = {
       spicetify.enable = mkForce false;
       kitty.package = wrapGraphics pkgs.kitty;
