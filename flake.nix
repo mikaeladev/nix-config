@@ -48,7 +48,7 @@
     };
 
     pixel-cursors = {
-      url = "github:mikaeladev/pixel-cursors";
+      url = "github:mikaeladev/pixel-cursors/cebd9ab8304282840bd2fde6ebff8166f4627230";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

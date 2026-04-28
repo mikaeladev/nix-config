@@ -130,8 +130,9 @@ in
 
       desktop = "${homeDirectory}/desktop";
       download = "${homeDirectory}/downloads";
-
+      projects = "${homeDirectory}/projects";
       documents = "${homeDirectory}/documents";
+
       templates = "${homeDirectory}/documents/templates";
       publicShare = "${homeDirectory}/documents/public";
 
