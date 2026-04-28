@@ -2,128 +2,112 @@
   config,
   globals,
   lib,
+  pkgs,
   ...
 }:
 
 let
   inherit (lib) mapAttrs;
-  inherit (globals) mainuser mkXdgBaseDirectoryPaths;
+  inherit (globals) mkXdgBaseDirectoryPaths;
 
-  withExtension =
-    extension: attrs: mapAttrs (_: value: value + ".${extension}") attrs;
+  withExt = value: value + ".desktop";
+  withExtAttrs = attrs: mapAttrs (_: value: withExt value) attrs;
 
-  mimeApps = withExtension "desktop" {
-    # kde apps (system-wide)
-    ark = "org.kde.ark";
+  mimeApps = withExtAttrs {
+    aseprite = "aseprite";
     dolphin = "org.kde.dolphin";
     gwenview = "org.kde.gwenview";
     kwrite = "org.kde.kwrite";
-    # user apps (see programs dir)
-    aseprite = "aseprite";
-    deadlock-mod-manager = "Deadlock Mod Manager";
-    prismlauncher = "org.prismlauncher.PrismLauncher";
-    vesktop = "vesktop";
     zed-editor = "dev.zed.Zed";
     zen-browser = "zen-beta";
   };
 
-  mimeGroups = with mimeApps; rec {
-    plainText = [
-      kwrite
-      zed-editor
-    ];
-    rasterImageFile = [
-      gwenview
-      aseprite
-    ];
-    srcCode = [
-      zed-editor
-      kwrite
-    ];
-    srcCodeWeb = [
-      zed-editor
-      zen-browser
-      kwrite
-    ];
-    vectorImageFile = [ gwenview ] ++ srcCodeWeb;
+  mimeAppsByFunction = rec {
+    textEditor = [ mimeApps.kwrite ];
+    codeEditor = [ mimeApps.zed-editor ] ++ textEditor;
+    bitmapEditor = [ mimeApps.aseprite ];
+    webBrowser = [ mimeApps.zen-browser ];
+    fileBrowser = [ mimeApps.dolphin ] ++ codeEditor;
+    imageViewer = [ mimeApps.gwenview ];
   };
 
-  associations = {
-    added = with mimeApps; {
-      "x-scheme-handler/deadlock-mod-manager" = deadlock-mod-manager;
-      "x-scheme-handler/discord" = vesktop;
-      "x-scheme-handler/zed" = zed-editor;
-      "x-scheme-handler/curseforge" = prismlauncher;
-      "x-scheme-handler/prismlauncher" = prismlauncher;
-    };
-  };
+  inherit (config.home) homeDirectory;
 
-  defaultApplications =
-    associations.added
-    // (with mimeGroups; {
-      "inode/directory" = with mimeApps; [
-        dolphin
-        zed-editor
-      ];
-
-      "application/x-zerosize" = plainText;
-      "text/*" = plainText;
-
-      "image/png" = rasterImageFile;
-      "image/webp" = rasterImageFile;
-      "image/svg+xml" = vectorImageFile;
-
-      "application/x-docbook+xml" = srcCode;
-      "application/x-shellscript" = srcCode;
-      "application/x-yaml" = srcCode;
-      "text/csv" = srcCode;
-      "text/markdown" = srcCode;
-      "text/x-c++hdr" = srcCode;
-      "text/x-c++src" = srcCode;
-      "text/x-chdr" = srcCode;
-      "text/x-cmake" = srcCode;
-      "text/x-csharp" = srcCode;
-      "text/x-csrc" = srcCode;
-      "text/x-go" = srcCode;
-      "text/x-java" = srcCode;
-      "text/x-lua" = srcCode;
-      "text/x-python" = srcCode;
-      "text/x-qml" = srcCode;
-
-      "application/json" = srcCodeWeb;
-      "application/xml" = srcCodeWeb;
-      "text/css" = srcCodeWeb;
-      "text/javascript" = srcCodeWeb;
-      "text/html" = srcCodeWeb;
-    });
-
-  defaultApplicationPackages = with config.programs; [
-    kitty.package
-    spicetify.spicedSpotify
-    zapzap.package
-  ];
+  inherit (mkXdgBaseDirectoryPaths homeDirectory)
+    cacheHome
+    configHome
+    dataHome
+    stateHome
+    ;
 in
 
 {
   xdg = {
-    inherit (mkXdgBaseDirectoryPaths mainuser.homeDirectory)
+    enable = true;
+    autostart.enable = true;
+    mime.enable = true;
+
+    mimeApps = rec {
+      enable = true;
+
+      associations.added = {
+        "x-scheme-handler/discord" = withExt "vesktop";
+        "x-scheme-handler/zed" = mimeApps.zed-editor;
+      };
+
+      defaultApplications =
+        associations.added
+        // (with mimeAppsByFunction; {
+          "inode/directory" = fileBrowser;
+
+          "text/*" = textEditor;
+          "text/csv" = textEditor;
+          "text/markdown" = textEditor;
+          "application/xml" = textEditor;
+          "application/json" = textEditor;
+          "application/x-yaml" = textEditor;
+          "application/x-shellscript" = textEditor;
+          "application/x-zerosize" = textEditor;
+
+          "text/css" = codeEditor;
+          "text/javascript" = codeEditor;
+          "text/x-c++hdr" = codeEditor;
+          "text/x-c++src" = codeEditor;
+          "text/x-chdr" = codeEditor;
+          "text/x-cmake" = codeEditor;
+          "text/x-csharp" = codeEditor;
+          "text/x-csrc" = codeEditor;
+          "text/x-go" = codeEditor;
+          "text/x-java" = codeEditor;
+          "text/x-lua" = codeEditor;
+          "text/x-python" = codeEditor;
+          "text/x-qml" = codeEditor;
+
+          "image/png" = imageViewer ++ bitmapEditor;
+          "image/svg+xml" = imageViewer ++ textEditor;
+
+          "text/html" = webBrowser ++ codeEditor;
+        });
+
+      defaultApplicationPackages = [
+        pkgs.kdePackages.ark
+        pkgs.kdePackages.gwenview
+        config.programs.kitty.package
+        config.programs.krita.package
+        config.programs.prismlauncher.package
+        config.programs.spicetify.spicedSpotify
+        config.programs.zapzap.package
+      ];
+    };
+
+    inherit
       cacheHome
       configHome
       dataHome
       stateHome
       ;
 
-    enable = true;
-    autostart.enable = true;
-    mime.enable = true;
-
-    mimeApps = {
-      inherit associations defaultApplications defaultApplicationPackages;
-
-      enable = true;
-    };
-
-    userDirs = with config.home; {
+    userDirs = {
       enable = true;
       createDirectories = true;
       setSessionVariables = false;
@@ -142,14 +126,13 @@ in
     };
   };
 
-  home.sessionVariables = with config.xdg; {
+  home.sessionVariables = {
     CUDA_CACHE_PATH = "${cacheHome}/nvidia";
-    DOCKER_CONFIG = "${configHome}/docker";
-    FFMPEG_DATADIR = "${configHome}/ffmpeg";
     GTK2_RC_FILES = "${configHome}/gtk-2.0/gtkrc";
+    FFMPEG_DATADIR = "${dataHome}/ffmpeg";
     WINEPREFIX = "${dataHome}/wineprefixes/default";
+    BUN_INSTALL = "${dataHome}/bun";
     CARGO_HOME = "${dataHome}/cargo";
     RUSTUP_HOME = "${dataHome}/rustup";
-    BUN_INSTALL = "${dataHome}/bun";
   };
 }
