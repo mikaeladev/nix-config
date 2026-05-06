@@ -1,5 +1,1 @@
-{ ... }:
-
-{
-  imports = [ ./minecraft.nix ];
-}
+{ imports = [ ./prismlauncher.nix ]; }
