@@ -1,1 +1,7 @@
-{ imports = [ ./prismlauncher.nix ]; }
+{ pkgs, ... }:
+
+{
+  imports = [ ./prismlauncher.nix ];
+
+  home.packages = [ pkgs.limo ];
+}
