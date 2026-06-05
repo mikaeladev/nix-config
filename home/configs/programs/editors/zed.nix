@@ -51,12 +51,14 @@
         auto_reveal_entries = true;
         sort_mode = "directories_first";
         sort_order = "upper";
+        dock = "left";
       };
 
       git_panel = {
         button = true;
         sort_by_path = false;
         status_style = "icon";
+        dock = "left";
       };
 
       title_bar = {
