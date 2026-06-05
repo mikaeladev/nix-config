@@ -1,7 +1,7 @@
 {
   programs.eww = {
     enable = false;
-    enableZshIntegration = true;
-    configDir = ./theme;
+    # enableZshIntegration = true;
+    # configDir = ./theme;
   };
 }

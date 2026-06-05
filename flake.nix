@@ -2,7 +2,7 @@
   description = "nix config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     flatpaks.url = "github:gmodena/nix-flatpak";
 
@@ -26,7 +26,7 @@
     # utils & wrappers #
 
     nixGL = {
-      url = "github:nix-community/nixGL/pull/187/head";
+      url = "github:tsssni/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -76,7 +76,6 @@
       agenix,
       home-manager,
       treefmt,
-      nvibrant,
       zed-extensions,
       ...
     }:
@@ -94,7 +93,6 @@
 
         overlays = [
           agenix.overlays.default
-          nvibrant.overlays.default
           zed-extensions.overlays.default
           self.overlays.default
         ];

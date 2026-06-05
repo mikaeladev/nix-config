@@ -32,21 +32,19 @@ let
 in
 
 {
-  lib.custom.mkEthernetConfig =
-    { name, uuid }:
-    {
-      inherit ipv4 ipv6;
+  lib.custom.mkEthernetConfig = { name, uuid }: {
+    inherit ipv4 ipv6;
 
-      connection = {
-        inherit uuid;
-        id = name;
-        type = "ethernet";
-      };
-
-      ethernet = {
-        auto-negotiate = true;
-      };
+    connection = {
+      inherit uuid;
+      id = name;
+      type = "ethernet";
     };
+
+    ethernet = {
+      auto-negotiate = true;
+    };
+  };
 
   lib.custom.mkWifiConfig =
     {

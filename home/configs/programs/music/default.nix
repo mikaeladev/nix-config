@@ -1,5 +1,3 @@
 { ... }:
 
-{
-  imports = [ ./spicetify ];
-}
+{ imports = [ ./spicetify ]; }

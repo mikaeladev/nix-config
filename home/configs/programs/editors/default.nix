@@ -1,5 +1,3 @@
 { ... }:
 
-{
-  imports = [ ./zed.nix ];
-}
+{ imports = [ ./zed.nix ]; }
