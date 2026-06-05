@@ -37,7 +37,6 @@ in
       prismlauncher.package = wrapGraphics pkgs.prismlauncher;
       rofi.package = wrapGraphics pkgs.rofi;
       vesktop.package = wrapGraphics pkgs.vesktop;
-      zapzap.package = wrapGraphics pkgs.zapzap;
       zed-editor.package = wrapGraphics pkgs.zed-editor;
       zen-browser.package = wrapGraphics pkgs.zen-browser;
     };

@@ -96,7 +96,6 @@ in
         config.programs.krita.package
         config.programs.prismlauncher.package
         config.programs.spicetify.spicedSpotify
-        config.programs.zapzap.package
       ];
     };
 
