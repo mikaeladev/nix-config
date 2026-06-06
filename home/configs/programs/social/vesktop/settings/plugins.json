@@ -238,31 +238,6 @@
   "PictureInPicture": {
     "enabled": true
   },
-  "PinDMs": {
-    "enabled": true,
-    "pinnedDMs": "",
-    "pinOrder": 0,
-    "dmSectionCollapsed": false,
-    "userBasedCategoryList": {
-      "764138386709544971": [
-        {
-          "id": "a2vazfm8l8t",
-          "name": "Pinned",
-          "color": 9807270,
-          "collapsed": false,
-          "channels": [
-            "1326430683790577784",
-            "1086871881333878784",
-            "1094838334402072637",
-            "982394488217559130",
-            "1110592241782771776",
-            "1323064197101129858"
-          ]
-        }
-      ]
-    },
-    "canCollapseDmSection": false
-  },
   "PlatformIndicators": {
     "enabled": true,
     "colorMobileIndicator": true,
