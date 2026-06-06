@@ -70,7 +70,7 @@ in
   };
 
   xdg.configFile."./vesktop/settings/quickCss.css" = {
-    source = builtins.toString ./settings/quick.css;
+    source = toString ./settings/quick.css;
   };
 
   xdg.autostart.entries = [

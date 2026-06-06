@@ -23,8 +23,7 @@ let
   newConfigPath = cfg.configPath;
 
   addId =
-    value:
-    builtins.map (a: a // { id = builtins.hashString "sha256" a.name; }) value;
+    value: map (a: a // { id = builtins.hashString "sha256" a.name; }) value;
 
   getAccountsForProfile =
     profileName: accounts:
@@ -91,7 +90,7 @@ in
             (redirectFileIf (profile.search.enable) "${name}/search.json.mozlz4")
             (redirectDirectoryIf (profile.extensions != [ ]) "${name}/extensions")
           ]
-          ++ (builtins.map (
+          ++ (map (
             a: redirectFile "${name}/ImapMail/${a.id}/msgFilterRules.dat"
           ) emailAccountsWithFilters)
         )

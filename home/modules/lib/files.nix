@@ -14,7 +14,7 @@
         matches = builtins.filter (str: (builtins.match "${key}=.*" str) != null) lines;
       in
       pkgs.writeTextFile {
-        name = builtins.baseNameOf source;
+        name = baseNameOf source;
         text = builtins.replaceStrings matches [ "${key}=${value}" ] text;
         executable = true;
       };
