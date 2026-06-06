@@ -13,11 +13,13 @@ in
 
   hardware = {
     graphics.enable = true;
-    nvidia.open = false;
-    cpu.amd.updateMicrocode = false;
-  };
+    cpu.amd.updateMicrocode = true;
 
-  swapDevices = [ ];
+    nvidia = {
+      open = false;
+      nvidiaSettings = false;
+    };
+  };
 
   zramSwap = {
     enable = true;

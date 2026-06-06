@@ -8,14 +8,13 @@
 }@args:
 
 let
-  inherit (globals) mainuser mkXdgBaseDirectoryPaths standalone;
   inherit (lib) getExe;
 in
 
 {
   lib.custom = rec {
     wrapGraphics =
-      package: if standalone then config.lib.nixGL.wrap package else package;
+      package: if globals.standalone then config.lib.nixGL.wrap package else package;
 
     wrapHome =
       {
@@ -23,7 +22,7 @@ in
         env ? { },
         exePath ? getExe package,
         binName ? baseNameOf exePath,
-        xdgs ? (mkXdgBaseDirectoryPaths mainuser.homeDirectory),
+        xdgs ? (config.xdg),
         newHome ? "${xdgs.stateHome}/${binName}-home",
       }:
       let

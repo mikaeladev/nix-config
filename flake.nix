@@ -98,24 +98,30 @@
         ];
       };
 
+      treefmtEval = treefmt.lib.evalModule pkgs ./treefmt.nix;
+
       mkNixosConfig = pkgs.lib.nixosSystem;
       mkHomeConfig = home-manager.lib.homeManagerConfiguration;
 
-      treefmtEval = treefmt.lib.evalModule pkgs ./treefmt.nix;
+      mkGlobals =
+        attrs:
+        {
+          standalone = false;
 
-      globals = {
-        mainuser = {
-          homeDirectory = "/home/mainuser";
-          username = "mainuser";
-          nickname = "mikaela";
-        };
-        mkXdgBaseDirectoryPaths = homeDir: {
-          cacheHome = "${homeDir}/.local/var/cache";
-          configHome = "${homeDir}/.local/etc";
-          dataHome = "${homeDir}/.local/share";
-          stateHome = "${homeDir}/.local/var/state";
-        };
-      };
+          mainuser = {
+            nickname = "mikaela";
+            username = "mainuser";
+            homeDirectory = "/home/mainuser";
+          };
+
+          xdgBaseDirectoryParts = {
+            configHome = ".local/etc";
+            dataHome = ".local/share";
+            cacheHome = ".local/var/cache";
+            stateHome = ".local/var/state";
+          };
+        }
+        // attrs;
     in
 
     {
@@ -124,24 +130,20 @@
       overlays.default = import ./overlay.nix inputs;
 
       nixosConfigurations.desktop = mkNixosConfig {
+        inherit pkgs;
         modules = [ ./nixos ];
-        pkgs = pkgs;
         specialArgs = {
           inherit inputs;
-          globals = globals // {
-            standalone = false;
-          };
+          globals = mkGlobals { };
         };
       };
 
       homeConfigurations.mainuser = mkHomeConfig {
+        inherit pkgs;
         modules = [ ./home ];
-        pkgs = pkgs;
         extraSpecialArgs = {
           inherit inputs;
-          globals = globals // {
-            standalone = true;
-          };
+          globals = mkGlobals { standalone = true; };
         };
       };
     };

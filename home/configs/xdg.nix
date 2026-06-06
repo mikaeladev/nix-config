@@ -8,7 +8,6 @@
 
 let
   inherit (lib) mapAttrs;
-  inherit (globals) mkXdgBaseDirectoryPaths;
 
   withExt = value: value + ".desktop";
   withExtAttrs = attrs: mapAttrs (_: value: withExt value) attrs;
@@ -33,7 +32,11 @@ let
 
   inherit (config.home) homeDirectory;
 
-  inherit (mkXdgBaseDirectoryPaths homeDirectory)
+  baseDirectories = mapAttrs (
+    _: value: "${homeDirectory}/${value}"
+  ) globals.xdgBaseDirectoryParts;
+
+  inherit (baseDirectories)
     cacheHome
     configHome
     dataHome
