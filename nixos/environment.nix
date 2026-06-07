@@ -92,7 +92,6 @@
   security.rtkit.enable = true;
 
   services = {
-    flatpak.enable = true;
     openssh.enable = true;
 
     # ly display manager

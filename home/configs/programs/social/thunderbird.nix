@@ -1,61 +1,31 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, pkgs, ... }:
 
 let
-  inherit (config.lib.custom) wrapGraphics wrapHome mkThunderbirdAddon;
+  inherit (config.lib.custom) wrapGraphics wrapHome;
 
-  thunderbirdHome = "${config.xdg.stateHome}/thunderbird-home";
-
-  minimizeOnClose = mkThunderbirdAddon {
-    name = "minimize-on-close";
-    version = "2.0.2.0-unsupported";
-    addonId = "minimize-on-close@rsjtdrjgfuzkfg.github.com";
-    url = "https://github.com/rsjtdrjgfuzkfg/thunderbird-minimizeonclose/releases/download/v2.0.2.0/minimizeonclose-unsupported.xpi";
-    sha256 = "sha256-AwOGVT0xzNPmKYxYKvDdDzqUK8lqbR+FH2KmKkZYvvo=";
-    meta = with lib; {
-      homepage = "https://github.com/rsjtdrjgfuzkfg/thunderbird-minimizeonclose";
-      description = "Minimizes Thunderbird's main window when clicking on the close button";
-      license = licenses.mpl20;
-      platforms = platforms.all;
-    };
-  };
-
-  simpleStartupMinimizer = mkThunderbirdAddon {
-    name = "simple-startup-minimize";
-    version = "0.6.0";
-    addonId = "simple-startup-minimize@farahats9.github.com";
-    url = "https://github.com/farahats9/simple-startup-minimizer/releases/download/v0.6/Simple.Startup.Minimizer.xpi";
-    sha256 = "sha256-oWuzyFoR8bikZrPSXMnQ2AOYAC4MQnWtKIK7rnyf+HM=";
-    meta = with lib; {
-      homepage = "https://github.com/farahats9/simple-startup-minimizer";
-      description = "Minimizes Thunderbird's main window on startup";
-      platforms = platforms.all;
-    };
-  };
+  tbHome = "${config.xdg.stateHome}/thunderbird-home";
+  tbProfiles = "${config.home.homeDirectory}/storage/thunderbird/profiles";
 in
 
 {
-  programs.thunderbird = {
-    enable = false; # leave disabled until config is complete
-
-    configPath = "${thunderbirdHome}/.thunderbird";
-    nativeMessagingHostsPath = "${thunderbirdHome}/.mozilla/native-messaging-hosts";
-
-    package = wrapHome {
+  home.packages = [
+    (wrapHome {
       package = wrapGraphics pkgs.thunderbird;
-      newHome = thunderbirdHome;
-    };
+      newHome = tbHome;
+    })
+  ];
 
-    profiles.personal = {
-      isDefault = true;
-      extensions = [
-        minimizeOnClose
-        simpleStartupMinimizer
-      ];
-    };
+  xdg.stateFile = {
+    "thunderbird-home/.thunderbird/profiles.ini".text = ''
+      [General]
+      StartWithLastProfile=1
+      Version=2
+
+      [Profile0]
+      Default=1
+      IsRelative=0
+      Name=personal
+      Path=${tbProfiles}/personal
+    '';
   };
 }
