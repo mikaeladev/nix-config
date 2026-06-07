@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   programs.bun = {
     enable = true;

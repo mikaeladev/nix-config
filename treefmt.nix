@@ -1,5 +1,3 @@
-{ ... }:
-
 let
   lineWidth = 80;
 in

@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   programs.krita = {
     enable = true;
