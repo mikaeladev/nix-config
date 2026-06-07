@@ -1,9 +1,4 @@
-{
-  config,
-  inputs,
-  pkgs,
-  ...
-}:
+{ config, pkgs, ... }:
 
 let
   fontName = config.gtk.font.name;
@@ -16,8 +11,6 @@ let
 in
 
 {
-  imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
-
   home.packages = [
     (pkgs.runCommand "whitesur-kde-minimal" { } ''
       mkdir -p $out/share

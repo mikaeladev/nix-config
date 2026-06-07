@@ -103,13 +103,18 @@
 
       mkGlobals =
         attrs:
-        {
+        rec {
           standalone = false;
 
           mainuser = {
             nickname = "mikaela";
             username = "mainuser";
             homeDirectory = "/home/mainuser";
+          };
+
+          storage = {
+            uuid = "191e3f9d-df7c-4b99-8d03-1c2c65a1dc7b";
+            mountPoint = "${mainuser.homeDirectory}/storage";
           };
 
           xdgBaseDirectoryParts = {

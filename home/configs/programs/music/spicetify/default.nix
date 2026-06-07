@@ -5,8 +5,6 @@ let
 in
 
 {
-  imports = [ inputs.spicetify.homeManagerModules.default ];
-
   programs.spicetify = {
     enable = true;
     wayland = true;

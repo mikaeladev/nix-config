@@ -1,43 +1,50 @@
-{ config, inputs, ... }:
+{ globals, lib, ... }:
 
 let
-  zenProfiles = "${config.home.homeDirectory}/storage/zen/profiles";
+  inherit (lib) isAttrs mkIf;
 in
 
 {
-  imports = [ inputs.zen-browser.homeModules.default ];
+  config = mkIf (isAttrs globals.storage) {
+    programs.zen-browser = {
+      enable = true;
+      profiles = { };
+    };
 
-  programs.zen-browser = {
-    enable = true;
-    profiles = { };
-  };
+    xdg.configFile =
+      let
+        profilesDir = "${globals.storage.mountPoint}/zen/profiles";
 
-  xdg.configFile = {
-    "zen/profiles.ini".text = ''
-      [Profile1]
-      IsRelative=0
-      Name=private
-      Path=${zenProfiles}/private
+        homeProfile = "${profilesDir}/home";
+        privateProfile = "${profilesDir}/private";
+      in
+      {
+        "zen/profiles.ini".text = ''
+          [Profile1]
+          IsRelative=0
+          Name=private
+          Path=${privateProfile}
 
-      [Profile0]
-      IsRelative=0
-      Name=home
-      Path=${zenProfiles}/home
-      Default=1
+          [Profile0]
+          IsRelative=0
+          Name=home
+          Path=${homeProfile}
+          Default=1
 
-      [General]
-      StartWithLastProfile=1
-      Version=2
+          [General]
+          StartWithLastProfile=1
+          Version=2
 
-      [Install0]
-      Default=${zenProfiles}/home
-      Locked=1
-    '';
+          [Install0]
+          Default=${homeProfile}
+          Locked=1
+        '';
 
-    "zen/installs.ini".text = ''
-      [0]
-      Default=${zenProfiles}/home
-      Locked=1
-    '';
+        "zen/installs.ini".text = ''
+          [0]
+          Default=${homeProfile}
+          Locked=1
+        '';
+      };
   };
 }

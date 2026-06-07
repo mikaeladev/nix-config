@@ -1,42 +1,52 @@
-{ config, lib, ... }:
+{
+  config,
+  globals,
+  lib,
+  ...
+}:
 
 let
-  storageDrive = "${config.home.homeDirectory}/storage";
-  prismStorage = "${storageDrive}/prism";
+  inherit (lib) isAttrs mkIf;
 in
 
 {
-  programs.prismlauncher = {
-    enable = true;
+  config = mkIf (isAttrs globals.storage) {
+    programs.prismlauncher = {
+      enable = true;
 
-    icons = [
-      ./assets/fabulously-optimised.png
-      ./assets/java.png
-    ];
+      icons = [
+        ./assets/fabulously-optimised.png
+        ./assets/java.png
+      ];
 
-    settings = {
-      CloseAfterLaunch = true;
+      settings =
+        let
+          prismStorage = "${globals.storage.mountPoint}/prism";
+        in
+        {
+          CloseAfterLaunch = true;
 
-      ConsoleFont = lib.head config.fonts.fontconfig.defaultFonts.monospace;
-      ConsoleFontSize = 10;
-      ConsoleMaxLines = 10000;
+          ConsoleFont = lib.head config.fonts.fontconfig.defaultFonts.monospace;
+          ConsoleFontSize = 10;
+          ConsoleMaxLines = 10000;
 
-      ApplicationTheme = "dark";
-      BackgroundCat = "rory";
-      IconTheme = "flat_white";
+          ApplicationTheme = "dark";
+          BackgroundCat = "rory";
+          IconTheme = "flat_white";
 
-      DownloadsDir = config.xdg.userDirs.download;
-      CentralModsDir = "${prismStorage}/mods";
-      InstanceDir = "${prismStorage}/instances";
-      SkinsDir = "${prismStorage}/skins";
-      IconsDir = "icons";
-      JavaDir = "java";
+          DownloadsDir = config.xdg.userDirs.download;
+          CentralModsDir = "${prismStorage}/mods";
+          InstanceDir = "${prismStorage}/instances";
+          SkinsDir = "${prismStorage}/skins";
+          IconsDir = "icons";
+          JavaDir = "java";
 
-      NumberOfConcurrentDownloads = 12;
-      NumberOfConcurrentTasks = 16;
-      RequestTimeout = 30;
+          NumberOfConcurrentDownloads = 12;
+          NumberOfConcurrentTasks = 16;
+          RequestTimeout = 30;
 
-      MaxMemAlloc = 1024 * 16;
+          MaxMemAlloc = 1024 * 16;
+        };
     };
   };
 }

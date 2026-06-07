@@ -1,8 +1,6 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  imports = [ inputs.zed-extensions.homeManagerModules.default ];
-
   programs.zed-editor = {
     enable = true;
 

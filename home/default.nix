@@ -1,7 +1,19 @@
-{ globals, pkgs, ... }:
+{
+  globals,
+  inputs,
+  pkgs,
+  ...
+}:
 
 {
-  imports = [
+  imports = with inputs; [
+    # flake modules
+    nvibrant.homeModules.default
+    plasma-manager.homeModules.plasma-manager
+    spicetify.homeManagerModules.default
+    zed-extensions.homeManagerModules.default
+    zen-browser.homeModules.default
+    # local modules
     ./configs
     ./modules
   ];

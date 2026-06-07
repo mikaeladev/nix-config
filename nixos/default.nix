@@ -7,10 +7,10 @@
 }:
 
 {
-  imports = [
+  imports = with inputs; [
     # flake modules
-    inputs.agenix.nixosModules.default
-    inputs.home-manager.nixosModules.default
+    agenix.nixosModules.default
+    home-manager.nixosModules.default
     # local modules
     ./boot.nix
     ./environment.nix
