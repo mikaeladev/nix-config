@@ -1,5 +1,15 @@
 { lib, pkgs, ... }:
 
+let
+  inherit (lib)
+    filter
+    match
+    readFile
+    replaceStrings
+    splitString
+    ;
+in
+
 {
   lib.custom = {
     updateDesktopFileValue =
@@ -9,14 +19,16 @@
         source,
       }:
       let
-        text = builtins.readFile source;
-        lines = lib.splitString "\n" text;
-        matches = builtins.filter (str: (builtins.match "${key}=.*" str) != null) lines;
+        text = readFile source;
+        lines = splitString "\n" text;
+        matches = filter (str: (match "${key}=.*" str) != null) lines;
       in
       pkgs.writeTextFile {
         name = baseNameOf source;
-        text = builtins.replaceStrings matches [ "${key}=${value}" ] text;
+        text = replaceStrings matches [ "${key}=${value}" ] text;
+        destination = "/${source}";
         executable = true;
-      };
+      }
+      + "/${source}";
   };
 }
