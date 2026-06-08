@@ -3,9 +3,7 @@
 {
   imports = [
     ./bun.nix
-    ./fastfetch.nix
-    ./ssh.nix
-    ./zoxide.nix
+    ./zed.nix
   ];
 
   home.packages = with pkgs; [

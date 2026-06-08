@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 let
+  inherit (builtins) fromJSON readFile;
   inherit (config.lib.custom) updateDesktopFileValue;
 in
 
@@ -34,23 +35,21 @@ in
     };
 
     vencord = {
-      themes = {
-        "system24" = ./themes/system24.css;
-      };
+      themes."system24" = ./theme.css;
 
       settings = {
         autoUpdate = false;
         autoUpdateNotification = false;
         notifyAboutUpdates = false;
 
-        useQuickCss = true;
         enableReactDevtools = true;
         disableMinSize = true;
         winCtrlQ = true;
 
+        useQuickCss = false;
         enabledThemes = [ "system24.css" ];
 
-        plugins = builtins.fromJSON (builtins.readFile ./settings/plugins.json);
+        plugins = fromJSON (readFile ./plugins.json);
 
         notifications = {
           timeout = 5000;
@@ -67,10 +66,6 @@ in
         };
       };
     };
-  };
-
-  xdg.configFile."./vesktop/settings/quickCss.css" = {
-    source = toString ./settings/quick.css;
   };
 
   xdg.autostart.entries = [
