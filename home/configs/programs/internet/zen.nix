@@ -5,7 +5,7 @@ let
 in
 
 {
-  config = mkIf (isAttrs globals.storage) {
+  config = mkIf (isAttrs globals.storageDevice) {
     programs.zen-browser = {
       enable = true;
       profiles = { };
@@ -13,7 +13,7 @@ in
 
     xdg.configFile =
       let
-        profilesDir = "${globals.storage.mountPoint}/zen/profiles";
+        profilesDir = "${globals.storageDevice.mountPoint}/zen/profiles";
 
         homeProfile = "${profilesDir}/home";
         privateProfile = "${profilesDir}/private";

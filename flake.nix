@@ -112,7 +112,7 @@
             homeDirectory = "/home/mainuser";
           };
 
-          storage = {
+          storageDevice = {
             uuid = "191e3f9d-df7c-4b99-8d03-1c2c65a1dc7b";
             mountPoint = "${mainuser.homeDirectory}/storage";
           };
@@ -137,7 +137,10 @@
         modules = [ ./nixos ];
         specialArgs = {
           inherit inputs;
-          globals = mkGlobals { };
+          globals = mkGlobals {
+            efiDevice = "B18D-67CD";
+            nixosDevice = "b9b31136-98f5-4ec9-b5e8-2b9b12bc4983";
+          };
         };
       };
 

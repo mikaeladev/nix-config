@@ -1,18 +1,11 @@
-{ globals, pkgs, ... }:
-
-let
-  efiDevice = "/dev/disk/by-uuid/B18D-67CD";
-  nixosDevice = "/dev/disk/by-uuid/b9b31136-98f5-4ec9-b5e8-2b9b12bc4983";
-in
+{ globals, ... }:
 
 {
-  nixpkgs.hostPlatform = pkgs.stdenv.hostPlatform.system;
-
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware = {
     graphics.enable = true;
-    cpu.amd.updateMicrocode = true;
+    enableRedistributableFirmware = true;
 
     nvidia = {
       open = false;
@@ -28,23 +21,33 @@ in
   };
 
   fileSystems = {
-    "/" = {
-      device = nixosDevice;
-      fsType = "btrfs";
-      options = [
-        "compress=zstd"
-        "subvol=@"
-      ];
-    };
-
     "/boot" = {
-      device = efiDevice;
+      device = "/dev/disk/by-uuid/" + globals.efiDevice;
       fsType = "vfat";
       options = [ "umask=0077" ];
     };
 
+    "/" = {
+      device = "/dev/disk/by-uuid/" + globals.nixosDevice;
+      fsType = "btrfs";
+      options = [
+        "compress=zstd"
+        "subvol=@root"
+      ];
+    };
+
+    "/nix" = {
+      device = "/dev/disk/by-uuid/" + globals.nixosDevice;
+      fsType = "btrfs";
+      options = [
+        "compress=zstd"
+        "subvol=@nix"
+        "noatime"
+      ];
+    };
+
     "/home" = {
-      device = nixosDevice;
+      device = "/dev/disk/by-uuid/" + globals.nixosDevice;
       fsType = "btrfs";
       options = [
         "compress=zstd"
@@ -53,10 +56,10 @@ in
     };
   }
   // (
-    if builtins.isAttrs globals.storage then
+    if builtins.isAttrs globals.storageDevice then
       {
-        ${globals.storage.mountPoint} = {
-          device = "/dev/disk/by-uuid/${globals.storage.uuid}";
+        ${globals.storageDevice.mountPoint} = {
+          device = "/dev/disk/by-uuid/" + globals.storageDevice.uuid;
           fsType = "btrfs";
           options = [
             "compress=zstd"

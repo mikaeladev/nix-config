@@ -10,7 +10,7 @@ let
 in
 
 {
-  config = mkIf (isAttrs globals.storage) {
+  config = mkIf (isAttrs globals.storageDevice) {
     programs.prismlauncher = {
       enable = true;
 
@@ -21,7 +21,7 @@ in
 
       settings =
         let
-          prismStorage = "${globals.storage.mountPoint}/prism";
+          prismStorage = "${globals.storageDevice.mountPoint}/prism";
         in
         {
           CloseAfterLaunch = true;

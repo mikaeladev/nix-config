@@ -12,7 +12,7 @@ let
 in
 
 {
-  config = mkIf (isAttrs globals.storage) {
+  config = mkIf (isAttrs globals.storageDevice) {
     home.packages = [
       (wrapHome {
         package = wrapGraphics pkgs.thunderbird;
@@ -30,7 +30,7 @@ in
         Default=1
         IsRelative=0
         Name=personal
-        Path=${globals.storage.mountPoint}/thunderbird/profiles/personal
+        Path=${globals.storageDevice.mountPoint}/thunderbird/profiles/personal
       '';
     };
   };

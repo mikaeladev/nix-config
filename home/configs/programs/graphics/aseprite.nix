@@ -11,11 +11,11 @@ let
 in
 
 {
-  config = mkIf (isAttrs globals.storage) {
+  config = mkIf (isAttrs globals.storageDevice) {
     home.packages = [
       (wrapHome {
         newHome = "${config.xdg.stateHome}/steam-home";
-        package = wrapStandaloneBin "${globals.storage.mountPoint}/steam/steamapps/common/Aseprite/aseprite";
+        package = wrapStandaloneBin "${globals.storageDevice.mountPoint}/steam/steamapps/common/Aseprite/aseprite";
       })
     ];
 
