@@ -1,6 +1,13 @@
-{ config, globals, ... }:
+{
+  config,
+  globals,
+  lib,
+  ...
+}:
 
 let
+  inherit (lib) mkIf;
+
   ipv4Nameservers = [
     "1.1.1.1"
     "1.0.0.1"
@@ -49,7 +56,7 @@ let
       ssid,
       pass,
     }:
-    {
+    mkIf globals.secrets {
       inherit ipv4 ipv6;
 
       connection = {
@@ -79,7 +86,7 @@ let
       privateKey,
       autoconnect ? false,
     }:
-    {
+    mkIf globals.secrets {
       connection = {
         inherit uuid autoconnect;
         id = name;
@@ -130,7 +137,7 @@ in
       dns = "none";
 
       ensureProfiles = {
-        environmentFiles = [ config.age.secrets.networks.path ];
+        environmentFiles = mkIf globals.secrets [ config.age.secrets.networks.path ];
 
         profiles = {
           ethernet = mkEthernetConfig {

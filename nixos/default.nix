@@ -2,9 +2,16 @@
   config,
   globals,
   inputs,
+  lib,
   pkgs,
   ...
 }:
+
+let
+  inherit (lib) mkIf;
+
+  secretsCfg = config.age.secrets;
+in
 
 {
   imports = with inputs; [
@@ -31,7 +38,7 @@
 
   system.stateVersion = "25.05";
 
-  age.secrets = {
+  age.secrets = mkIf globals.secrets {
     "networks".file = ../secrets/networks.age;
     "passwords/root".file = ../secrets/passwords/root.age;
     "passwords/mainuser".file = ../secrets/passwords/mainuser.age;
@@ -41,14 +48,16 @@
     root = {
       uid = 0;
       shell = pkgs.zsh;
-      hashedPasswordFile = config.age.secrets."passwords/root".path;
+      hashedPasswordFile = mkIf globals.secrets secretsCfg."passwords/root".path;
+      initialPassword = "changeme";
     };
 
     ${globals.mainuser.username} = {
       uid = 1000;
       shell = pkgs.zsh;
       description = globals.mainuser.nickname;
-      hashedPasswordFile = config.age.secrets."passwords/mainuser".path;
+      hashedPasswordFile = mkIf globals.secrets secretsCfg."passwords/mainuser".path;
+      initialPassword = "changeme";
       extraGroups = [
         "networkmanager"
         "wheel"

@@ -104,6 +104,7 @@
       mkGlobals =
         attrs:
         rec {
+          secrets = true;
           standalone = false;
 
           mainuser = {
