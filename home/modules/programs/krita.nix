@@ -15,9 +15,7 @@ in
   options.programs.krita = {
     enable = mkEnableOption "Krita";
 
-    package = mkPackageOption pkgs "krita" {
-      nullable = true;
-    };
+    package = mkPackageOption pkgs "krita" { nullable = true; };
   };
 
   config = mkIf cfg.enable {
