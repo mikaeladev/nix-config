@@ -12,6 +12,8 @@ in
 
 {
   home.packages = [
+    pkgs.zayron-simple-separator
+
     (pkgs.runCommand "whitesur-kde-minimal" { } ''
       mkdir -p $out/share
       ln -s ${pkgs.whitesur-kde}/share/{aurorae,color-schemes,plasma} $out/share
