@@ -18,6 +18,25 @@
     ./modules
   ];
 
+  nix = {
+    package = pkgs.nixVersions.latest;
+    settings.download-buffer-size = 524288000; # 500 MiB
+    assumeXdg = true;
+  };
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      nvidia.acceptLicense = true;
+    };
+
+    overlays = with inputs; [
+      agenix.overlays.default
+      zed-extensions.overlays.default
+      self.overlays.default
+    ];
+  };
+
   home = {
     inherit (globals.mainuser) homeDirectory username;
 
@@ -36,15 +55,6 @@
   };
 
   news.display = "silent";
-
-  nix = {
-    assumeXdg = true;
-    package = pkgs.nixVersions.latest;
-
-    settings = {
-      download-buffer-size = 524288000; # 500 MiB
-    };
-  };
 
   programs.home-manager.enable = true;
   targets.genericLinux.enable = globals.standalone;

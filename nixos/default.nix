@@ -36,6 +36,11 @@ in
     ];
   };
 
+  nixpkgs.config = {
+    allowUnfree = true;
+    nvidia.acceptLicense = true;
+  };
+
   system.stateVersion = "25.05";
 
   age.secrets = mkIf globals.secrets {
@@ -69,7 +74,7 @@ in
     useGlobalPkgs = false;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit globals inputs pkgs; };
+    extraSpecialArgs = { inherit globals inputs; };
 
     users = {
       ${globals.mainuser.username} = import ../../home;

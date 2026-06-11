@@ -69,36 +69,20 @@
 
   outputs =
     inputs@{
-      self,
       nixpkgs,
-      agenix,
       home-manager,
       treefmt,
-      zed-extensions,
       ...
     }:
 
     let
       system = "x86_64-linux";
 
-      pkgs = import nixpkgs {
-        inherit system;
-
-        config = {
-          allowUnfree = true;
-          nvidia.acceptLicense = true;
-        };
-
-        overlays = [
-          agenix.overlays.default
-          zed-extensions.overlays.default
-          self.overlays.default
-        ];
-      };
+      pkgs = nixpkgs.legacyPackages.${system};
 
       treefmtEval = treefmt.lib.evalModule pkgs ./treefmt.nix;
 
-      mkNixosConfig = pkgs.lib.nixosSystem;
+      mkNixosConfig = nixpkgs.lib.nixosSystem;
       mkHomeConfig = home-manager.lib.homeManagerConfiguration;
 
       mkGlobals =
@@ -134,7 +118,6 @@
       overlays.default = import ./overlay.nix inputs;
 
       nixosConfigurations.desktop = mkNixosConfig {
-        inherit pkgs;
         modules = [ ./nixos ];
         specialArgs = {
           inherit inputs;
