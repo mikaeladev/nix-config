@@ -17,7 +17,6 @@ in
 
     package = mkPackageOption pkgs "krita" {
       nullable = true;
-      default = pkgs.krita;
     };
   };
 
