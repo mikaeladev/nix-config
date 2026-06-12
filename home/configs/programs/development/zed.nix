@@ -148,7 +148,7 @@
     enable = true;
     packages = with pkgs.zed-extensions; [
       # languages
-      astro
+      # astro - currently missing from zed ext flake?
       basher
       desktop
       git-firefly
@@ -160,6 +160,7 @@
       neocmake
       nix
       qml
+      rasi
       scheme
       scss
       tombi
@@ -173,32 +174,6 @@
 
       # other bits
       discord-presence
-
-      (pkgs.buildZedExtension (finalAttrs: {
-        name = "rasi";
-        version = "83f5e3befc28a7a4526648ff6a047a381132739b";
-
-        src = pkgs.fetchFromGitHub {
-          owner = "mikaeladev";
-          repo = "zed-rasi";
-          rev = finalAttrs.version;
-          hash = "sha256-eQpLcRnu4hXLKNw9rlYV7ClVz1aiftXQhJAHukrjf+g=";
-        };
-
-        grammars = [
-          (pkgs.buildZedGrammar (finalAttrs: {
-            name = "rasi";
-            version = "e735c6881d8b475aaa4ef8f0a2bdfd825b438143";
-
-            src = pkgs.fetchFromGitHub {
-              owner = "Fymyte";
-              repo = "tree-sitter-rasi";
-              rev = finalAttrs.version;
-              hash = "sha256-MERNUroM1ndV6TtXYGg0AmXRtNlNWphVx32TzgMUnac=";
-            };
-          }))
-        ];
-      }))
     ];
   };
 }
