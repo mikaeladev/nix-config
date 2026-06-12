@@ -3,6 +3,7 @@
 {
   imports = [
     ./bun.nix
+    ./git.nix
     ./zed.nix
   ];
 
