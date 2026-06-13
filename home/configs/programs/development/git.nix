@@ -1,3 +1,5 @@
+{ config, ... }:
+
 {
   programs.git = {
     enable = true;
@@ -9,6 +11,12 @@
         name = "mikaeladev";
         email = "mikaeladev@icloud.com";
       };
+    };
+
+    signing = {
+      format = "ssh";
+      key = "${config.home.homeDirectory}/.ssh/sign_id_ed25519.pub";
+      signByDefault = true;
     };
   };
 }
