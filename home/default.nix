@@ -8,7 +8,6 @@
 {
   imports = with inputs; [
     # flake modules
-    nvibrant.homeModules.default
     plasma-manager.homeModules.plasma-manager
     spicetify.homeManagerModules.default
     zed-extensions.homeManagerModules.default

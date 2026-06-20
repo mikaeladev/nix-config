@@ -5,7 +5,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      # nvibrant: add module
+      url = "github:nix-community/home-manager/pull/9509/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -63,12 +64,6 @@
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
-    };
-
-    nvibrant = {
-      url = "github:mikaeladev/nix-nvibrant";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.treefmt.follows = "treefmt";
     };
 
     spicetify = {

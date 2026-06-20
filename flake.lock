@@ -54,15 +54,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1780593650,
-        "narHash": "sha256-CHo7k65YTL3HY+WQVedDTupji+LMgNlKCdrtRHZFAK4=",
+        "lastModified": 1781705443,
+        "narHash": "sha256-RM/EzNCZ2S9Q+6B275TrI/j2/98NwsyJ5jkjRP/MmZA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "447fd9ff62501dae7206dfe180ee89f8de27b7d5",
+        "rev": "c6b2de238295b8b35f22c5427b63c4b8c5bd26e2",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
+        "ref": "pull/9509/head",
         "repo": "home-manager",
         "type": "github"
       }
@@ -103,29 +104,6 @@
         "owner": "nixos",
         "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nvibrant": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt": [
-          "treefmt"
-        ]
-      },
-      "locked": {
-        "lastModified": 1780657147,
-        "narHash": "sha256-BDisKOHqGH6SBbjxdT7LGU0ZBL4t8LMynFF2FQqcuRs=",
-        "owner": "mikaeladev",
-        "repo": "nix-nvibrant",
-        "rev": "081d1289db1ac2eb41ed85419a316e881a906140",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mikaeladev",
-        "repo": "nix-nvibrant",
         "type": "github"
       }
     },
@@ -186,7 +164,6 @@
         "home-manager": "home-manager",
         "nixGL": "nixGL",
         "nixpkgs": "nixpkgs",
-        "nvibrant": "nvibrant",
         "pixel-cursors": "pixel-cursors",
         "plasma-manager": "plasma-manager",
         "spicetify": "spicetify",
