@@ -18,12 +18,6 @@
       inputs.systems.follows = "systems";
     };
 
-    nixGL = {
-      url = "github:tsssni/nixGL";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-    };
-
     treefmt = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";

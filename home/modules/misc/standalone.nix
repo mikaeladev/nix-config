@@ -19,9 +19,6 @@ in
       # nixos uses `programs.steam.extraCompatPackages`
       pkgs.protonplus
 
-      # spicetify module has no package override for spiced spotify
-      (wrapGraphics config.programs.spicetify.spicedSpotify)
-
       # stops nvidia-settings from cluttering $HOME
       (wrapPackage {
         flags."--config" = "${config.xdg.configHome}/nvidia/settings";
@@ -29,27 +26,10 @@ in
       })
     ];
 
-    programs = {
-      spicetify.enable = mkForce false;
-      kitty.package = wrapGraphics pkgs.kitty;
-      krita.package = wrapGraphics pkgs.krita;
-      obs-studio.package = wrapGraphics pkgs.obs-studio;
-      prismlauncher.package = wrapGraphics pkgs.prismlauncher;
-      rofi.package = wrapGraphics pkgs.rofi;
-      vesktop.package = wrapGraphics pkgs.vesktop;
-      zed-editor.package = wrapGraphics pkgs.zed-editor;
-      zen-browser.package = wrapGraphics pkgs.zen-browser;
-    };
-
-    services = {
-      easyeffects.package = wrapGraphics pkgs.easyeffects;
-    };
-
-    targets.genericLinux.nixGL = {
-      packages = inputs.nixGL.packages;
-      defaultWrapper = "nvidia";
-      installScripts = [ "nvidia" ];
-      vulkan.enable = true;
+    targets.genericLinux.gpu.nvidia = {
+      enable = true;
+      version = "595.71.05";
+      sha256 = "sha256-NiA7iWC35JyKQva6H1hjzeNKBek9KyS3mK8G3YRva4I=";
     };
 
     # install kvantum through system package manager
