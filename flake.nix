@@ -38,6 +38,12 @@
       inputs.darwin.follows = "";
     };
 
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems";
+    };
+
     pixel-cursors = {
       url = "github:mikaeladev/pixel-cursors/cebd9ab8304282840bd2fde6ebff8166f4627230";
       inputs.nixpkgs.follows = "nixpkgs";
