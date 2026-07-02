@@ -1,6 +1,5 @@
 {
   config,
-  globals,
   inputs,
   lib,
   pkgs,
@@ -13,9 +12,6 @@ in
 
 {
   lib.custom = rec {
-    wrapGraphics =
-      package: if globals.standalone then config.lib.nixGL.wrap package else package;
-
     wrapHome =
       {
         package,

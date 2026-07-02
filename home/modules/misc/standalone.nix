@@ -2,7 +2,6 @@
 
 {
   config,
-  inputs,
   lib,
   pkgs,
   ...
@@ -10,7 +9,7 @@
 
 let
   inherit (lib) mkForce mkIf pathExists;
-  inherit (config.lib.custom) wrapGraphics wrapPackage wrapStandaloneBin;
+  inherit (config.lib.custom) wrapPackage wrapStandaloneBin;
 in
 
 {

@@ -8,14 +8,14 @@
 
 let
   inherit (lib) isAttrs mkIf;
-  inherit (config.lib.custom) wrapGraphics wrapHome;
+  inherit (config.lib.custom) wrapHome;
 in
 
 {
   config = mkIf (isAttrs globals.storageDevice) {
     home.packages = [
       (wrapHome {
-        package = wrapGraphics pkgs.thunderbird;
+        package = pkgs.thunderbird;
         newHome = "${config.xdg.stateHome}/thunderbird-home";
       })
     ];
