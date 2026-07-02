@@ -10,6 +10,7 @@
 
   home.packages = with pkgs; [
     agenix
+    gram
     nodejs
     pnpm
     rustup
