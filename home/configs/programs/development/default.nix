@@ -14,6 +14,5 @@
     nodejs
     pnpm
     rustup
-    vulkan-tools
   ];
 }

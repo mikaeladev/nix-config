@@ -9,7 +9,7 @@
 
 let
   inherit (lib) mkForce mkIf pathExists;
-  inherit (config.lib.custom) wrapPackage wrapStandaloneBin;
+  inherit (config.lib.custom) wrapVulkan wrapPackage wrapStandaloneBin;
 in
 
 {
@@ -31,9 +31,9 @@ in
       sha256 = "sha256-NiA7iWC35JyKQva6H1hjzeNKBek9KyS3mK8G3YRva4I=";
     };
 
-    home.sessionVariables = {
-      # https://github.com/nix-community/home-manager/issues/9581
-      VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/";
+    programs = {
+      zed-editor.package = wrapVulkan pkgs.zed-editor;
+      prismlauncher.package = wrapVulkan pkgs.prismlauncher;
     };
 
     # install kvantum through system package manager

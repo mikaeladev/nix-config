@@ -67,6 +67,14 @@ in
         '';
       };
 
+    # https://github.com/nix-community/home-manager/issues/9581
+    wrapVulkan =
+      package:
+      wrapPackage {
+        inherit pkgs package;
+        env.VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/";
+      };
+
     wrapPackage =
       {
         pkgs ? args.pkgs,
