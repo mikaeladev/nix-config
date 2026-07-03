@@ -20,6 +20,10 @@ in
     '')
   ];
 
+  home.shellAliases = {
+    restart-plasma = "systemctl --user restart plasma-plasmashell";
+  };
+
   programs.plasma = {
     enable = true;
 

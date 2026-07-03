@@ -43,12 +43,9 @@
     preferXdgDirectories = true;
     shell.enableZshIntegration = true;
 
-    shellAliases = rec {
-      # really useful for when plasmashell panels glitch out
-      restart-plasma = "systemctl --user restart plasma-plasmashell";
-
-      home-rebuild = "NIXPKGS_ALLOW_UNFREE=1 home-manager switch --impure";
-      home-rollback = "${home-rebuild} --rollback";
+    shellAliases = {
+      home-rebuild = "home-manager switch --impure";
+      home-rollback = "home-manager switch --impure --rollback";
     };
 
     stateVersion = "25.05";
