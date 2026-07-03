@@ -1,15 +1,8 @@
 {
-  description = "nix config flake";
-
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # utils & wrappers #
+    # dependencies #
 
     systems.url = "github:nix-systems/default";
 
@@ -23,12 +16,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    wrappers = {
-      url = "github:Lassulus/wrappers";
+    # core modules #
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # programs & overlays #
 
     agenix = {
       url = "github:ryantm/agenix";
@@ -38,26 +31,13 @@
       inputs.darwin.follows = "";
     };
 
+    # home modules #
+
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
     };
-
-    pixel-cursors = {
-      url = "github:mikaeladev/pixel-cursors/cebd9ab8304282840bd2fde6ebff8166f4627230";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.treefmt-nix.follows = "treefmt";
-    };
-
-    zed-extensions = {
-      url = "github:DuskSystems/nix-zed-extensions";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # home modules #
 
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
@@ -66,7 +46,7 @@
     };
 
     spicetify = {
-      url = "github:Gerg-L/spicetify-nix";
+      url = "github:gerg-l/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
     };
@@ -75,6 +55,28 @@
       url = "github:0xc000022070/zen-browser-flake/beta";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+    };
+
+    # packages #
+
+    pixel-cursors = {
+      url = "github:mikaeladev/pixel-cursors/cebd9ab";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.treefmt-nix.follows = "treefmt";
+    };
+
+    zed-extensions = {
+      url = "github:dusksystems/nix-zed-extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # utils #
+
+    wrappers = {
+      url = "github:lassulus/wrappers";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
