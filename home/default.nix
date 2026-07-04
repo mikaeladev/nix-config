@@ -65,15 +65,6 @@ in
 
   home = {
     inherit (globals.mainuser) homeDirectory username;
-
-    preferXdgDirectories = true;
-    shell.enableZshIntegration = true;
-
-    shellAliases = {
-      home-rebuild = "home-manager switch --impure";
-      home-rollback = "home-manager switch --impure --rollback";
-    };
-
     stateVersion = "25.05";
   };
 

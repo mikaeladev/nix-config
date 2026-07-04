@@ -22,4 +22,13 @@
       PROMPT='[%F{yellow}%n%f@%F{yellow}%m%f:%F{yellow}%~%f]%# '
     '';
   };
+
+  home = {
+    shell.enableZshIntegration = true;
+
+    shellAliases = {
+      home-rebuild = "home-manager switch --impure";
+      home-rollback = "home-manager switch --impure --rollback";
+    };
+  };
 }

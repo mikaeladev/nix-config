@@ -128,6 +128,8 @@ in
     };
   };
 
+  home.preferXdgDirectories = true;
+
   home.sessionVariables = {
     CUDA_CACHE_PATH = "${cacheHome}/nvidia";
     GTK2_RC_FILES = "${configHome}/gtk-2.0/gtkrc";
