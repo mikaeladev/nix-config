@@ -3,5 +3,6 @@
     ./lib
     ./misc
     ./programs
+    # ./services
   ];
 }
