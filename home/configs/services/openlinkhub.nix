@@ -1,0 +1,5 @@
+{
+  services.openlinkhub = {
+    # enable = true;
+  };
+}

@@ -7,28 +7,51 @@
 
 let
   inherit (lib)
+    attrsToList
+    concatLines
     concatStringsSep
+    fromJSON
     getExe
+    hasSuffix
     hm
+    isString
+    literalExpression
     maintainers
+    makeBinPath
     mkEnableOption
+    mkForce
     mkIf
     mkOption
     mkPackageOption
     optionals
+    path
     platforms
     types
     ;
   inherit (pkgs)
     buildEnv
     coreutils
+    diffutils
+    formats
+    getent
+    gnugrep
+    jq
+    su
     substitute
+    systemd
     writeShellScript
     writeTextDir
     ;
 
+  concatMapLines = f: list: concatLines (map f list);
+
+  withSuffix =
+    suffix: value: if (hasSuffix suffix value) then value else (value + suffix);
+
+  jsonFormat = formats.json { };
+
   cfg = config.services.openlinkhub;
-  cfgDir = "${config.xdg.configHome}/OpenLinkHub";
+  configDir = "${config.xdg.configHome}/OpenLinkHub";
 in
 
 {
@@ -39,27 +62,40 @@ in
 
     package = mkPackageOption pkgs "openlinkhub" { };
 
+    config = mkOption {
+      type = types.nullOr jsonFormat.type;
+      default = null;
+      example = {
+        frontend = true;
+        listenAddress = "127.0.0.1";
+        listenPort = 27003;
+        logLevel = "info";
+      };
+      description = ''
+        Configuration to be merged into {file}`config.json`.
+
+        This is equivalent to setting {option}`extraConfigs."config.json"`.
+      '';
+    };
+
+    dashboard = mkOption {
+      type = types.nullOr jsonFormat.type;
+      default = null;
+      example = {
+        celsius = true;
+        pageTitle = "OpenLinkHub WebUI";
+        languageCode = "en_US";
+        theme = "default";
+      };
+      description = ''
+        Dashboard settings to be merged into {file}`dashboard.json`.
+
+        This is equivalent to setting {option}`extraConfigs."dashboard.json"`.
+      '';
+    };
+
     memory = {
       enable = mkEnableOption "memory configuration";
-
-      type = mkOption {
-        type =
-          with types;
-          nullOr (enum [
-            4
-            5
-          ]);
-        default = null;
-        example = 5;
-        description = ''
-          Which generation the device belongs to.
-
-          See the OpenLinkHub [docs] for a full list of supported devices and
-          their respective generations.
-
-          [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/supported-devices.md
-        '';
-      };
 
       sku = mkOption {
         type = with types; nullOr str;
@@ -92,6 +128,55 @@ in
           [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/memory-configuration.md
         '';
       };
+
+      type = mkOption {
+        type = with types; nullOr (ints.between 4 5);
+        default = null;
+        example = 5;
+        description = ''
+          Which generation the device belongs to.
+
+          See the OpenLinkHub [docs] for a full list of supported devices and
+          their respective generations.
+
+          [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/supported-devices.md
+        '';
+      };
+    };
+
+    extraConfigs = mkOption {
+      type = with types; attrsOf (either jsonFormat.type lines);
+      default = { };
+      example = literalExpression ''
+        {
+          # merges with existing `i2c0.json`
+          "database/profiles/i2c0.json" = {
+            Active = true;
+            Path = "/run/user/1000/OpenLinkHub/database/profiles/i2c0.json";
+            Product = "Memory";
+            Serial = "i2c0";
+            # ...
+          };
+          # overwrites existing `display.json`
+          "display.json" = '''
+            [
+              {
+                "Index": 1,
+                "Name": "card1-DP-1",
+                "Width": 2560,
+                "Height": 1440,
+                # ...
+              }
+            ]
+          ''';
+        }
+      '';
+      description = ''
+        Additional files to be written to {file}`$XDG_CONFIG_HOME/OpenLinkHub`.
+
+        Content generated from an attrset will be merged, while content passed
+        as lines will be written as is, overwriting any previous data.
+      '';
     };
   };
 
@@ -110,15 +195,29 @@ in
       in
       [ (assertPlatform "services.openlinkhub" pkgs platforms.linux) ]
       ++ optionals (cfg.memory.enable) [
-        (assertMemoryOptionNotNull "type")
         (assertMemoryOptionNotNull "sku")
         (assertMemoryOptionNotNull "smb")
+        (assertMemoryOptionNotNull "type")
       ];
+
+    services.openlinkhub = {
+      config = mkIf cfg.memory.enable {
+        memory = mkForce true;
+        memorySku = mkForce cfg.memory.sku;
+        memorySmBus = mkForce cfg.memory.smb;
+        memoryType = mkForce cfg.memory.type;
+      };
+
+      extraConfigs = {
+        "config.json" = mkIf (cfg.config != null) (mkForce cfg.config);
+        "dashboard.json" = mkIf (cfg.dashboard != null) (mkForce cfg.dashboard);
+      };
+    };
 
     systemd.user = {
       services.OpenLinkHub = {
         Unit = {
-          After = "default.target";
+          After = [ "default.target" ];
           Description = cfg.package.meta.description;
           StartLimitIntervalSec = 60;
           StartLimitBurst = 5;
@@ -126,12 +225,12 @@ in
         Service = {
           ExecStart = getExe cfg.package;
           ExecReload = "${coreutils}/bin/kill -s HUP $MAINPID";
-          WorkingDirectory = "\${XDG_RUNTIME_DIR:-/run/user/$UID}/OpenLinkHub";
+          WorkingDirectory = "%t/OpenLinkHub";
           Restart = "always";
           RestartSec = 5;
         };
         Install = {
-          WantedBy = "default.target";
+          WantedBy = [ "default.target" ];
         };
       };
 
@@ -141,12 +240,12 @@ in
             name = "openlinkhub";
             paths = [ "${cfg.package}/opt/OpenLinkHub" ];
             postBuild = ''
-              rm database
-              ln -st ${cfgDir} database config.json dashboard.json display.json
+              rm $out/database
+              ln -st $out \
+                ${configDir}/{database,config.json,dashboard.json,display.json}
             '';
           };
         in
-        # %t == $XDG_RUNTIME_DIR
         [ "C+ ${runtimeEnv} - - - - %t/OpenLinkHub" ];
     };
 
@@ -164,8 +263,8 @@ in
                 dir = "/";
                 substitutions = [
                   "--replace-fail"
-                  "'OWNER=\"${groupName}\"'"
-                  "'GROUP=\"${groupName}\"'"
+                  ''OWNER="${groupName}"''
+                  ''GROUP="${groupName}"''
                 ];
               })
             ]
@@ -176,13 +275,23 @@ in
             ]);
           };
 
-          setupPackage = writeShellScript "openlinkhub-setup" ''
+          setupScript = writeShellScript "openlinkhub-setup" ''
             set -euo pipefail
+
+            PATH="${
+              makeBinPath [
+                coreutils
+                getent
+                gnugrep
+                su
+                systemd
+              ]
+            }''${PATH:+:}$PATH"
 
             if ! getent group ${groupName} >/dev/null; then
               for gid in $(seq 999 -1 900); do
-                if ! getent group "$gid" >/dev/null; then
-                  groupadd -g "$gid" ${groupName}
+                if ! getent group $gid >/dev/null; then
+                  groupadd -g $gid ${groupName}
                   echo "created group '${groupName}' with gid $gid"
                   break
                 fi
@@ -191,10 +300,11 @@ in
 
             if ! id -nG $UID | grep -qw ${groupName}; then
               usermod -aG ${groupName} $UID
-              echo "added user $UID to ${groupName}"
+              echo "added user $UID to '${groupName}'"
             fi
 
             ln -fst ${udevDir} ${udevRules}/*
+            ln -fst "''${NIX_STATE_DIR:-/nix/var/nix}/gcroots" ${udevRules}/*
             echo "updated udev rules"
 
             udevadm control --reload-rules
@@ -202,7 +312,7 @@ in
           '';
 
           missingConditions = [
-            "! getent group ${groupName} >/dev/null"
+            "! ${getExe getent} group ${groupName} >/dev/null"
             "[ ! -L ${udevDir}/99-openlinkhub.rules ]"
           ]
           ++ (optionals cfg.memory.enable [
@@ -210,22 +320,75 @@ in
           ]);
 
           outdatedConditions = [
-            "! id -nG $UID | grep -qw ${groupName}"
-            "! cmp -s ${udevDir}/99-openlinkhub.rules"
+            "! ${coreutils}/bin/id -nG $UID | ${getExe gnugrep} -qw ${groupName}"
+            "! ${diffutils}/bin/cmp -s ${udevDir}/99-openlinkhub.rules"
           ]
           ++ (optionals cfg.memory.enable [
-            "! cmp -s ${udevDir}/98-corsair-memory.rules"
+            "! ${diffutils}/bin/cmp -s ${udevDir}/98-corsair-memory.rules"
           ]);
         in
         hm.dag.entryAnywhere ''
           if ${concatStringsSep " || " missingConditions}; then
             warnEcho "To finish setting up OpenLinkHub, run"
-            warnEcho "  sudo ${setupPackage}"
+            warnEcho "  sudo ${setupScript}"
           elif ${concatStringsSep " || " outdatedConditions}; then
             warnEcho "OpenLinkHub requires an update, run"
-            warnEcho "  sudo ${setupPackage}"
+            warnEcho "  sudo ${setupScript}"
           fi
         '';
+
+      configureOpenLinkHub = hm.dag.entryAfter [ "writeBoundary" ] ''
+        runEval() {
+          if [[ -v DRY_RUN ]]; then
+            echo "$1"
+          else
+            eval "$1"
+          fi
+        }
+
+        writeConfig() {
+          runEval "cat '$1' > '$2'"
+        }
+
+        mergeConfig() {
+          runEval "${getExe jq} -s 'reduce .[] as \$obj ({}; . * \$obj)' '$2' '$1' > '$2'"
+        }
+
+        run mkdir -p "${configDir}"
+
+        run cp -ru ${cfg.package}/opt/OpenLinkHub/database \
+          '${configDir}/database'
+
+        ${concatMapLines (
+          { name, value }:
+          let
+            nameWithSuffix = withSuffix ".json" name;
+
+            configPath = path.subpath.join [
+              configDir
+              nameWithSuffix
+            ];
+
+            configFile = jsonFormat.generate (baseNameOf configPath) (
+              if isString value then fromJSON value else value
+            );
+          in
+          if isString value then
+            ''
+              writeConfig '${configFile}' '${configPath}'
+            ''
+          else
+            ''
+              if [ -e '${configPath}' ]; then
+                mergeConfig '${configFile}' '${configPath}'
+              else
+                writeConfig '${configFile}' '${configPath}'
+              fi
+            ''
+        ) (attrsToList cfg.extraConfigs)}
+
+        unset -f runEval writeConfig mergeConfig
+      '';
     };
   };
 }
