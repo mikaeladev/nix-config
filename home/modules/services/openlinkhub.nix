@@ -104,8 +104,8 @@ in
         description = ''
           The SKU of the device.
 
-          You can typically find this by running `dmidecode -t memory` and
-          grepping by 'Part Number'.
+          You can find this by running `sudo dmidecode -t memory` and grepping
+          by 'Part Number'.
 
           See the OpenLinkHub [docs] for more information.
 
@@ -116,12 +116,12 @@ in
       smb = mkOption {
         type = with types; nullOr (strMatching "i2c-[[:digit:]]");
         default = null;
-        example = "i2c-15";
+        example = "i2c-0";
         description = ''
           The SMBus controller for the device.
 
-          This value will vary from system to system. Usually, it's the first
-          `smbus` device in the output from `i2cdetect -l`.
+          You can find this by running `i2cdetect -l` and grepping by 'SMBus',
+          with it typically being the first device from the list.
 
           See the OpenLinkHub [docs] for more information.
 
@@ -136,8 +136,11 @@ in
         description = ''
           Which generation the device belongs to.
 
+          You can find this by running `sudo dmidecode -t memory` and grepping
+          by 'Type: DDR[4-5]'.
+
           See the OpenLinkHub [docs] for a full list of supported devices and
-          their respective generations.
+          their generations.
 
           [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/supported-devices.md
         '';
