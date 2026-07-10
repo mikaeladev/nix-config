@@ -18,13 +18,15 @@ let
     literalExpression
     maintainers
     makeBinPath
+    mkDefault
     mkEnableOption
     mkForce
     mkIf
     mkOption
     mkPackageOption
+    optionalAttrs
     optionals
-    path
+    optionalString
     platforms
     types
     ;
@@ -33,11 +35,9 @@ let
     coreutils
     diffutils
     formats
-    getent
-    gnugrep
     jq
-    su
-    substitute
+    rsync
+    runCommand
     systemd
     writeShellScript
     writeTextDir
@@ -62,13 +62,12 @@ in
 
     package = mkPackageOption pkgs "openlinkhub" { };
 
-    config = mkOption {
+    settings = mkOption {
       type = types.nullOr jsonFormat.type;
       default = null;
       example = {
-        frontend = true;
-        listenAddress = "127.0.0.1";
-        listenPort = 27003;
+        debug = false;
+        metrics = false;
         logLevel = "info";
       };
       description = ''
@@ -79,72 +78,107 @@ in
     };
 
     dashboard = mkOption {
-      type = types.nullOr jsonFormat.type;
       default = null;
-      example = {
-        celsius = true;
-        pageTitle = "OpenLinkHub WebUI";
-        languageCode = "en_US";
-        theme = "default";
-      };
-      description = ''
-        Dashboard settings to be merged into {file}`dashboard.json`.
+      type = types.nullOr (
+        types.submodule {
+          options = {
+            enable = mkEnableOption "the frontend dashboard";
 
-        This is equivalent to setting {option}`extraConfigs."dashboard.json"`.
-      '';
+            address = mkOption {
+              type = types.str;
+              default = "127.0.0.1";
+              example = "127.0.0.2";
+              description = ''
+                Which local address the dashboard listen from.
+              '';
+            };
+
+            port = mkOption {
+              type = types.int;
+              default = 27003;
+              example = 27004;
+              description = ''
+                Which port the dashboard should listen from.
+              '';
+            };
+
+            settings = mkOption {
+              type = types.nullOr jsonFormat.type;
+              default = null;
+              example = {
+                celsius = true;
+                languageCode = "en_US";
+                pageTitle = "OpenLinkHub WebUI";
+              };
+              description = ''
+                Dashboard settings to be merged into {file}`dashboard.json`.
+
+                This is equivalent to setting {option}`extraConfigs."dashboard.json"`.
+              '';
+            };
+          };
+        }
+      );
     };
 
-    memory = {
-      enable = mkEnableOption "memory configuration";
+    memory = mkOption {
+      default = null;
+      type = types.nullOr (
+        types.submodule {
+          options = {
+            enable = mkEnableOption "memory configuration";
 
-      sku = mkOption {
-        type = with types; nullOr str;
-        default = null;
-        example = "CMT64GX5M2B5600Z40";
-        description = ''
-          The SKU of the device.
+            sku = mkOption {
+              type = with types; nullOr str;
+              default = null;
+              example = "CMT64GX5M2B5600Z40";
+              description = ''
+                The SKU of the device.
 
-          You can find this by running `sudo dmidecode -t memory` and grepping
-          by 'Part Number'.
+                You can find this by running `sudo dmidecode -t memory` and grepping
+                by 'Part Number'.
 
-          See the OpenLinkHub [docs] for more information.
+                See the OpenLinkHub [docs] for more information.
 
-          [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/memory-configuration.md
-        '';
-      };
+                [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/memory-configuration.md
+              '';
+            };
 
-      smb = mkOption {
-        type = with types; nullOr (strMatching "i2c-[[:digit:]]");
-        default = null;
-        example = "i2c-0";
-        description = ''
-          The SMBus controller for the device.
+            smb = mkOption {
+              type = with types; nullOr (strMatching "i2c-[[:digit:]]");
+              default = null;
+              example = "i2c-0";
+              description = ''
+                The SMBus controller for the device.
 
-          You can find this by running `i2cdetect -l` and grepping by 'SMBus',
-          with it typically being the first device from the list.
+                You can find this by running `i2cdetect -l` and grepping by 'SMBus',
+                with it typically being the first device from the list.
 
-          See the OpenLinkHub [docs] for more information.
+                See the OpenLinkHub [docs] for more information.
 
-          [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/memory-configuration.md
-        '';
-      };
+                [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/memory-configuration.md
+              '';
+            };
 
-      type = mkOption {
-        type = with types; nullOr (ints.between 4 5);
-        default = null;
-        example = 5;
-        description = ''
-          Which generation the device belongs to.
+            type = mkOption {
+              type = with types; nullOr (ints.between 4 5);
+              default = null;
+              example = 5;
+              description = ''
+                Which generation the device belongs to.
 
-          You can find this by running `sudo dmidecode -t memory` and grepping
-          by 'Type: DDR[4-5]'.
+                You can find this by running `sudo dmidecode -t memory` and grepping
+                by 'Type: DDR[4-5]'.
 
-          See the OpenLinkHub [docs] for a full list of supported devices and
-          their generations.
+                See the OpenLinkHub [docs] for a full list of supported devices and
+                their generations.
 
-          [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/supported-devices.md
-        '';
-      };
+                [docs]: https://github.com/jurkovic-nikola/OpenLinkHub/blob/main/docs/supported-devices.md
+              '';
+            };
+          };
+        }
+      );
     };
 
     extraConfigs = mkOption {
@@ -184,36 +218,72 @@ in
   };
 
   config = mkIf cfg.enable {
-    assertions =
+    assertions = [
+      (hm.assertions.assertPlatform "services.openlinkhub" pkgs platforms.linux)
+      {
+        assertion = ((cfg.settings or { }).enableGamepad or false) == false;
+        message = ''
+          OpenLinkHub's virtual gamepad is unsupported in user-space,
+          requiring raw access to uinput and thus opening the door for
+          keyloggers.
+        '';
+      }
+    ]
+    ++ (
       let
-        inherit (hm.assertions) assertPlatform;
-
         assertMemoryOptionNotNull = opt: {
           assertion = cfg.memory.${opt} != null;
           message = ''
-            The option `services.openlinkhub.memory.${opt}` must not be null when
-            `services.openlinkhub.memory.enable` is set to true.
+            The option `services.openlinkhub.memory.${opt}` must not be null
+            when `services.openlinkhub.memory.enable` is set to true.
           '';
         };
       in
-      [ (assertPlatform "services.openlinkhub" pkgs platforms.linux) ]
-      ++ optionals (cfg.memory.enable) [
+      optionals (cfg.memory.enable) [
         (assertMemoryOptionNotNull "sku")
         (assertMemoryOptionNotNull "smb")
         (assertMemoryOptionNotNull "type")
-      ];
+      ]
+    );
 
     services.openlinkhub = {
-      config = mkIf cfg.memory.enable {
-        memory = mkForce true;
-        memorySku = mkForce cfg.memory.sku;
-        memorySmBus = mkForce cfg.memory.smb;
-        memoryType = mkForce cfg.memory.type;
-      };
+      settings =
+        let
+          dashboardValues = optionalAttrs (cfg.dashboard != null) (
+            {
+              frontend = cfg.dashboard.enable;
+              listenAddress = mkDefault null;
+              listenPort = mkDefault null;
+            }
+            // (optionalAttrs cfg.dashboard.enable {
+              listenAddress = cfg.dashboard.address;
+              listenPort = cfg.dashboard.port;
+            })
+          );
+
+          memoryValues = optionalAttrs (cfg.memory != null) (
+            {
+              memory = cfg.memory.enable;
+              memorySku = mkDefault null;
+              memorySmBus = mkDefault null;
+              memoryType = mkDefault null;
+            }
+            // (optionalAttrs cfg.memory.enable {
+              memorySku = cfg.memory.sku;
+              memorySmBus = cfg.memory.smb;
+              memoryType = cfg.memory.type;
+            })
+          );
+
+          mergedValues = dashboardValues // memoryValues;
+        in
+        mkIf (mergedValues != { }) mergedValues;
 
       extraConfigs = {
-        "config.json" = mkIf (cfg.config != null) (mkForce cfg.config);
-        "dashboard.json" = mkIf (cfg.dashboard != null) (mkForce cfg.dashboard);
+        "config.json" = mkIf (cfg.settings != null) (mkForce cfg.settings);
+        "dashboard.json" = mkIf (
+          cfg.dashboard != null && cfg.dashboard.enable && cfg.dashboard.settings != null
+        ) (mkForce cfg.dashboard.settings);
       };
     };
 
@@ -237,161 +307,118 @@ in
         };
       };
 
-      tmpfiles.rules =
-        let
-          runtimeEnv = buildEnv {
-            name = "openlinkhub";
-            paths = [ "${cfg.package}/opt/OpenLinkHub" ];
-            postBuild = ''
-              rm $out/database
-              ln -st $out \
-                ${configDir}/{database,config.json,dashboard.json,display.json}
-            '';
-          };
-        in
-        [ "C+ ${runtimeEnv} - - - - %t/OpenLinkHub" ];
+      tmpfiles.rules = [
+        "D %t/OpenLinkHub - - - - -"
+
+        "L+ %t/OpenLinkHub/static - - - - ${cfg.package}/opt/OpenLinkHub/static"
+        "L+ %t/OpenLinkHub/web - - - - ${cfg.package}/opt/OpenLinkHub/web"
+
+        "L+ %t/OpenLinkHub/database - - - - ${configDir}/database"
+        "L+ %t/OpenLinkHub/config.json - - - - ${configDir}/config.json"
+        "L+ %t/OpenLinkHub/dashboard.json - - - - ${configDir}/dashboard.json"
+        "L+ %t/OpenLinkHub/display.json - - - - ${configDir}/display.json"
+      ];
     };
 
     home.activation = {
       checkOpenLinkHubSetup =
         let
-          groupName = "openlinkhub";
-          udevDir = "/etc/udev/rules.d";
+          udevRuleDir = "/etc/udev/rules.d";
+          udevRuleName = "70-openlinkhub.rules";
 
-          udevRules = buildEnv {
-            name = "openlinkhub-udev-rules";
-            paths = [
-              (substitute {
-                src = "${cfg.package}${udevDir}/99-openlinkhub.rules";
-                dir = "/";
-                substitutions = [
-                  "--replace-fail"
-                  ''OWNER="${groupName}"''
-                  ''GROUP="${groupName}"''
-                ];
-              })
-            ]
-            ++ (optionals cfg.memory.enable [
-              (writeTextDir "98-corsair-memory.rules" ''
-                KERNEL=="${cfg.memory.smb}", MODE="0600", GROUP="${groupName}"
-              '')
-            ]);
-          };
+          udevRule = runCommand udevRuleName { } ''
+            cp ${cfg.package}${udevRuleDir}/99-openlinkhub.rules $out
+
+            sed -i '/^KERNEL=="uinput"/d' $out
+
+            substituteInPlace $out --replace-fail \
+              'OWNER="openlinkhub"' 'TAG+="uaccess"'
+
+            ${optionalString cfg.memory.enable ''
+              echo 'KERNEL=="${cfg.memory.smb}", MODE="0660", TAG+="uaccess"' > $out
+            ''}
+          '';
 
           setupScript = writeShellScript "openlinkhub-setup" ''
             set -euo pipefail
 
-            PATH="${
-              makeBinPath [
-                coreutils
-                getent
-                gnugrep
-                su
-                systemd
-              ]
-            }''${PATH:+:}$PATH"
+            PATH="${makeBinPath [ systemd ]}''${PATH:+:}$PATH"
 
-            if ! getent group ${groupName} >/dev/null; then
-              for gid in $(seq 999 -1 900); do
-                if ! getent group $gid >/dev/null; then
-                  groupadd -g $gid ${groupName}
-                  echo "created group '${groupName}' with gid $gid"
-                  break
-                fi
-              done
-            fi
+            echo "Linking udev rule..."
+            sudo mkdir -p ${udevRuleDir}
+            sudo ln -fs ${udevRule} ${udevRuleDir}/${udevRuleName}
+            sudo ln -fs ${udevRuleDir}/${udevRuleName} \
+              ''${NIX_STATE_DIR:-/nix/var/nix}/gcroots/${udevRuleName}
 
-            if ! id -nG $UID | grep -qw ${groupName}; then
-              usermod -aG ${groupName} $UID
-              echo "added user $UID to '${groupName}'"
-            fi
+            echo "Reloading udev rules..."
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger
 
-            ln -fst ${udevDir} ${udevRules}/*
-            ln -fst "''${NIX_STATE_DIR:-/nix/var/nix}/gcroots" ${udevRules}/*
-            echo "updated udev rules"
+            echo "Restarting OpenLinkHub..."
+            systemctl --user restart OpenLinkHub.service
 
-            udevadm control --reload-rules
-            udevadm trigger
+            echo "Success!"
           '';
-
-          missingConditions = [
-            "! ${getExe getent} group ${groupName} >/dev/null"
-            "[ ! -L ${udevDir}/99-openlinkhub.rules ]"
-          ]
-          ++ (optionals cfg.memory.enable [
-            "[ ! -L ${udevDir}/98-corsair-memory.rules ]"
-          ]);
-
-          outdatedConditions = [
-            "! ${coreutils}/bin/id -nG $UID | ${getExe gnugrep} -qw ${groupName}"
-            "! ${diffutils}/bin/cmp -s ${udevDir}/99-openlinkhub.rules"
-          ]
-          ++ (optionals cfg.memory.enable [
-            "! ${diffutils}/bin/cmp -s ${udevDir}/98-corsair-memory.rules"
-          ]);
         in
         hm.dag.entryAnywhere ''
-          if ${concatStringsSep " || " missingConditions}; then
+          if [ ! -L ${udevRuleDir}/${udevRuleName} ]; then
             warnEcho "To finish setting up OpenLinkHub, run"
-            warnEcho "  sudo ${setupScript}"
-          elif ${concatStringsSep " || " outdatedConditions}; then
+            warnEcho "  ${setupScript}"
+          elif ! cmp -s ${udevRuleDir}/${udevRuleName} ${udevRule}; then
             warnEcho "OpenLinkHub requires an update, run"
-            warnEcho "  sudo ${setupScript}"
+            warnEcho "  ${setupScript}"
           fi
         '';
 
-      configureOpenLinkHub = hm.dag.entryAfter [ "writeBoundary" ] ''
-        runEval() {
-          if [[ -v DRY_RUN ]]; then
-            echo "$1"
-          else
-            eval "$1"
-          fi
-        }
+      configureOpenLinkHub =
+        let
+          generatedLines = concatMapLines (
+            { name, value }:
+            let
+              configPath = configDir + "/" + (withSuffix ".json" name);
 
-        writeConfig() {
-          runEval "cat '$1' > '$2'"
-        }
+              configFile = jsonFormat.generate (baseNameOf configPath) (
+                if isString value then fromJSON value else value
+              );
+            in
+            if isString value then
+              "writeConfig '${configFile}' '${configPath}'"
+            else
+              ''
+                if [ -e '${configPath}' ]; then
+                  mergeConfig '${configFile}' '${configPath}'
+                else
+                  writeConfig '${configFile}' '${configPath}'
+                fi
+              ''
+          ) (attrsToList cfg.extraConfigs);
+        in
+        hm.dag.entryAfter [ "writeBoundary" ] ''
+          runEval() {
+            if [[ -v DRY_RUN ]]; then
+              echo "$1"
+            else
+              eval "$1"
+            fi
+          }
 
-        mergeConfig() {
-          runEval "${getExe jq} -s 'reduce .[] as \$obj ({}; . * \$obj)' '$2' '$1' > '$2'"
-        }
+          writeConfig() {
+            runEval "cat '$1' > '$2'"
+          }
 
-        run mkdir -p "${configDir}"
+          mergeConfig() {
+            runEval "${getExe jq} -s 'reduce .[] as \$obj ({}; . * \$obj)' '$2' '$1' > '$2'"
+          }
 
-        run cp -ru ${cfg.package}/opt/OpenLinkHub/database \
-          '${configDir}/database'
+          run mkdir -p "${configDir}/database"
 
-        ${concatMapLines (
-          { name, value }:
-          let
-            nameWithSuffix = withSuffix ".json" name;
+          run ${getExe rsync} -a --chmod=D755,F644 --ignore-existing \
+            ${cfg.package}/opt/OpenLinkHub/database/ '${configDir}/database'
 
-            configPath = path.subpath.join [
-              configDir
-              nameWithSuffix
-            ];
+          ${generatedLines}
 
-            configFile = jsonFormat.generate (baseNameOf configPath) (
-              if isString value then fromJSON value else value
-            );
-          in
-          if isString value then
-            ''
-              writeConfig '${configFile}' '${configPath}'
-            ''
-          else
-            ''
-              if [ -e '${configPath}' ]; then
-                mergeConfig '${configFile}' '${configPath}'
-              else
-                writeConfig '${configFile}' '${configPath}'
-              fi
-            ''
-        ) (attrsToList cfg.extraConfigs)}
-
-        unset -f runEval writeConfig mergeConfig
-      '';
+          unset -f runEval writeConfig mergeConfig
+        '';
     };
   };
 }
