@@ -19,7 +19,7 @@
     # core modules #
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/pull/9631/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
