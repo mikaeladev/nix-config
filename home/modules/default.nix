@@ -1,7 +1,7 @@
 {
   imports = [
-    ./lib
     ./misc
     ./programs
+    ./lib.nix
   ];
 }

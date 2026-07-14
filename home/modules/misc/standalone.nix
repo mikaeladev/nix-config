@@ -9,7 +9,7 @@
 
 let
   inherit (lib) mkForce mkIf pathExists;
-  inherit (config.lib.custom) wrapVulkan wrapPackage wrapStandaloneBin;
+  inherit (config.lib.self) wrapVulkan wrapPackage wrapStandaloneBin;
 in
 
 {

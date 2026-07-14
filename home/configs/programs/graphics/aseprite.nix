@@ -7,14 +7,14 @@
 
 let
   inherit (lib) isAttrs mkIf;
-  inherit (config.lib.custom) wrapHome wrapStandaloneBin;
+  inherit (config.lib.self) wrapHome wrapStandaloneBin;
 in
 
 {
   config = mkIf (isAttrs globals.storageDevice) {
     home.packages = [
       (wrapHome {
-        newHome = "${config.xdg.stateHome}/steam-home";
+        homePath = "${config.xdg.stateHome}/steam-home";
         package = wrapStandaloneBin "${globals.storageDevice.mountPoint}/steam/steamapps/common/Aseprite/aseprite";
       })
     ];

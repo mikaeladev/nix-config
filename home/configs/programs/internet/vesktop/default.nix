@@ -1,8 +1,13 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  inherit (builtins) fromJSON readFile;
-  inherit (config.lib.custom) updateDesktopFileValue;
+  inherit (lib) fromJSON readFile;
+  inherit (config.lib.self) patchDesktopItemExec;
 in
 
 {
@@ -69,10 +74,8 @@ in
   };
 
   xdg.autostart.entries = [
-    (updateDesktopFileValue {
-      key = "Exec";
-      value = "${config.home.profileDirectory}/bin/vesktop";
-      source = "${pkgs.vesktop}/share/applications/vesktop.desktop";
-    })
+    (patchDesktopItemExec (pkgs.vesktop + "/share/applications/vesktop.desktop") (
+      config.home.profileDirectory + "/bin/vesktop"
+    ))
   ];
 }
