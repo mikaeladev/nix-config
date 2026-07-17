@@ -60,7 +60,7 @@ in
       src = fetchzip {
         # this does NOT feel reliable but it's worth a try
         # src: https://api.kde-look.org/ocs/v1/content/data/2137418
-        url = "https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTc3NDM3MDY5OSwibyI6IjEiLCJzIjoiYjAyNTg3M2RjZDI4ZWM0NzYwNTUyNzczMDNkNjFlMmQ5NTZiOTgzMjY0Yzg2MTQxZmZmOGU5ZWVlYjA0MjNhN2VkODRhNWUzNTc1MThhMWVhZjY5NTVkNjM0ZDc0ZWM5ZDEyODY4MTExZjliMDU3ZTUwNTBlNjBiMzA1ZDY4ZmYiLCJ0IjoxNzgxMTYxMzQxLCJzdGZwIjpudWxsLCJzdGlwIjoiODIuNDMuMTAyLjEwOCJ9.crn7zfQ2DL8sSAaHOeI945_kd0rGAs-JsRgC9CA-nWw/zayron.simple.separator.tar.xz";
+        url = "https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTc3NDM3MDY5OSwibyI6IjEiLCJzIjoiYmI2MDlhZWY1MzRlNzAwNTEwZjk5Yzg4ZTM4MDA2Y2M1Y2UyNzQwYWZmNzE3NDYyZWI5NWQ5ZDlhZmIwZTVhMjc3ZDlkYzY2MTUxODQwOTZmNGNmNTA0MzgxYWNlNTEwOTEwOTE4MDdhOWM5ZjVkNjdmZWE3OGM4MzNjYzg1M2EiLCJ0IjoxNzg0MjYzMzUyLCJzdGZwIjpudWxsLCJzdGlwIjoiODIuNDMuMTAyLjEwOCJ9.Kjna4Ttep3PCVNqKhXaE820C5BoFAWJozvK3QjlwvJc/zayron.simple.separator.tar.xz";
         hash = "sha256-NWTmLxCmAVF0IMX5ejZtQLKpWjAGffxTP2FYcrmVS3g=";
       };
 

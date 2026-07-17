@@ -73,6 +73,11 @@ in
     };
   };
 
+  nixpkgs.config.permittedInsecurePackages = [
+    # https://github.com/NixOS/nixpkgs/issues/537847
+    "electron-40.10.5"
+  ];
+
   xdg.autostart.entries = [
     (patchDesktopItemExec (pkgs.vesktop + "/share/applications/vesktop.desktop") (
       config.home.profileDirectory + "/bin/vesktop"

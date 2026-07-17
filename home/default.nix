@@ -13,7 +13,6 @@ in
 {
   imports = with inputs; [
     # flake modules
-    nixvim.homeModules.nixvim
     plasma-manager.homeModules.plasma-manager
     spicetify.homeManagerModules.default
     zed-extensions.homeManagerModules.default

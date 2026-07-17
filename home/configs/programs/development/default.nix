@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ./neovim
     ./bun.nix
     ./git.nix
     ./zed.nix
