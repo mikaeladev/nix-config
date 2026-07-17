@@ -32,8 +32,9 @@ in
     };
 
     programs = {
-      zed-editor.package = wrapVulkan pkgs.zed-editor;
+      gram.package = wrapVulkan pkgs.gram;
       prismlauncher.package = wrapVulkan pkgs.prismlauncher;
+      zed-editor.package = wrapVulkan pkgs.zed-editor;
     };
 
     # install kvantum through system package manager
