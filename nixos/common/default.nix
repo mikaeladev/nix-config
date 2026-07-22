@@ -1,6 +1,5 @@
 {
   config,
-  globals,
   inputs,
   lib,
   pkgs,
@@ -10,6 +9,7 @@
 let
   inherit (lib) mkIf;
 
+  secretsEnabled = config.globals.secrets;
   secretsCfg = config.age.secrets;
 in
 
@@ -21,7 +21,6 @@ in
     # local modules
     ./boot.nix
     ./environment.nix
-    ./hardware.nix
     ./networks.nix
   ];
 
@@ -43,26 +42,26 @@ in
 
   system.stateVersion = "25.05";
 
-  age.secrets = mkIf globals.secrets {
-    "networks".file = ../secrets/networks.age;
-    "passwords/root".file = ../secrets/passwords/root.age;
-    "passwords/mainuser".file = ../secrets/passwords/mainuser.age;
+  age.secrets = mkIf secretsEnabled {
+    "networks".file = ../../secrets/networks.age;
+    "passwords/root".file = ../../secrets/passwords/root.age;
+    "passwords/mainuser".file = ../../secrets/passwords/mainuser.age;
   };
 
   users.users = {
     root = {
       uid = 0;
       shell = pkgs.zsh;
-      hashedPasswordFile = mkIf globals.secrets secretsCfg."passwords/root".path;
       initialPassword = "changeme";
+      hashedPasswordFile = mkIf secretsEnabled secretsCfg."passwords/root".path;
     };
 
-    ${globals.mainuser.username} = {
+    mainuser = {
       uid = 1000;
       shell = pkgs.zsh;
-      description = globals.mainuser.nickname;
-      hashedPasswordFile = mkIf globals.secrets secretsCfg."passwords/mainuser".path;
+      description = config.globals.mainuser.nickname;
       initialPassword = "changeme";
+      hashedPasswordFile = mkIf secretsEnabled secretsCfg."passwords/mainuser".path;
       extraGroups = [
         "networkmanager"
         "wheel"
@@ -74,10 +73,14 @@ in
     useGlobalPkgs = false;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit globals inputs; };
+    extraSpecialArgs = { inherit inputs; };
+    users.mainuser = {
+      inherit (config) globals;
 
-    users = {
-      ${globals.mainuser.username} = import ../../home;
+      imports = [
+        ../../home
+        ../../globals.nix
+      ];
     };
   };
 }

@@ -1,9 +1,4 @@
-{
-  config,
-  globals,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 
 let
   inherit (lib) mkIf;
@@ -56,7 +51,7 @@ let
       ssid,
       pass,
     }:
-    mkIf globals.secrets {
+    mkIf config.globals.secrets {
       inherit ipv4 ipv6;
 
       connection = {
@@ -86,12 +81,12 @@ let
       privateKey,
       autoconnect ? false,
     }:
-    mkIf globals.secrets {
+    mkIf config.globals.secrets {
       connection = {
         inherit uuid autoconnect;
         id = name;
         type = "wireguard";
-        permissions = "user:${globals.mainuser.username}:;";
+        permissions = "user:${config.globals.mainuser.username}:;";
       };
 
       ipv4 = {
@@ -123,8 +118,6 @@ in
 
 {
   networking = {
-    hostName = "nixos";
-
     # unnecessary for manual dns
     useDHCP = false;
     dhcpcd.enable = false;
@@ -137,7 +130,9 @@ in
       dns = "none";
 
       ensureProfiles = {
-        environmentFiles = mkIf globals.secrets [ config.age.secrets.networks.path ];
+        environmentFiles = mkIf config.globals.secrets [
+          config.age.secrets.networks.path
+        ];
 
         profiles = {
           ethernet = mkEthernetConfig {

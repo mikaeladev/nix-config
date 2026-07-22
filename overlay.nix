@@ -1,11 +1,16 @@
-inputs: pkgs: _:
+{ inputs }:
+
+final: _:
 
 let
-  system = pkgs.stdenv.hostPlatform.system;
+  pkgs = final;
+
+  inherit (pkgs) callPackage;
+  inherit (pkgs.stdenv.hostPlatform) system;
 in
 
 {
-  apple-emoji = pkgs.callPackage (
+  apple-emoji = callPackage (
     { stdenv, fetchurl, ... }:
 
     stdenv.mkDerivation (finalAttrs: {
@@ -27,7 +32,7 @@ in
     })
   ) { };
 
-  apple-sf-pro = pkgs.callPackage (
+  apple-sf-pro = callPackage (
     { stdenv, fetchFromGitHub, ... }:
 
     stdenv.mkDerivation {
@@ -50,7 +55,7 @@ in
     }
   ) { };
 
-  zayron-simple-separator = pkgs.callPackage (
+  zayron-simple-separator = callPackage (
     { stdenv, fetchzip }:
 
     stdenv.mkDerivation {

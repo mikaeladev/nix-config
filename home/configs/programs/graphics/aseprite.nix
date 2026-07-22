@@ -1,21 +1,18 @@
-{
-  config,
-  globals,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 
 let
-  inherit (lib) isAttrs mkIf;
+  inherit (lib) mkIf;
   inherit (config.lib.self) wrapHome wrapStandaloneBin;
 in
 
 {
-  config = mkIf (isAttrs globals.storageDevice) {
+  config = mkIf config.globals.storage.enable {
     home.packages = [
       (wrapHome {
-        homePath = "${config.xdg.stateHome}/steam-home";
-        package = wrapStandaloneBin "${globals.storageDevice.mountPoint}/steam/steamapps/common/Aseprite/aseprite";
+        homePath = config.xdg.stateHome + "/steam-home";
+        package = wrapStandaloneBin (
+          config.globals.storage.mountPoint + "/steam/steamapps/common/Aseprite/aseprite"
+        );
       })
     ];
 

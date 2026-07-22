@@ -1,16 +1,13 @@
-{
-  config,
-  globals,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 
 let
-  inherit (lib) isAttrs mkIf;
+  inherit (lib) head mkIf;
+
+  prismStorage = config.globals.storage.mountPoint + "/prism";
 in
 
 {
-  config = mkIf (isAttrs globals.storageDevice) {
+  config = mkIf config.globals.storage.enable {
     programs.prismlauncher = {
       enable = true;
 
@@ -19,34 +16,30 @@ in
         ./assets/java.png
       ];
 
-      settings =
-        let
-          prismStorage = "${globals.storageDevice.mountPoint}/prism";
-        in
-        {
-          CloseAfterLaunch = true;
+      settings = {
+        CloseAfterLaunch = true;
 
-          ConsoleFont = lib.head config.fonts.fontconfig.defaultFonts.monospace;
-          ConsoleFontSize = 10;
-          ConsoleMaxLines = 10000;
+        ConsoleFont = head config.fonts.fontconfig.defaultFonts.monospace;
+        ConsoleFontSize = 10;
+        ConsoleMaxLines = 10000;
 
-          ApplicationTheme = "dark";
-          BackgroundCat = "rory";
-          IconTheme = "flat_white";
+        ApplicationTheme = "dark";
+        BackgroundCat = "rory";
+        IconTheme = "flat_white";
 
-          DownloadsDir = config.xdg.userDirs.download;
-          CentralModsDir = "${prismStorage}/mods";
-          InstanceDir = "${prismStorage}/instances";
-          SkinsDir = "${prismStorage}/skins";
-          IconsDir = "icons";
-          JavaDir = "java";
+        DownloadsDir = config.xdg.userDirs.download;
+        CentralModsDir = prismStorage + "/mods";
+        InstanceDir = prismStorage + "/instances";
+        SkinsDir = prismStorage + "/skins";
+        IconsDir = "icons";
+        JavaDir = "java";
 
-          NumberOfConcurrentDownloads = 12;
-          NumberOfConcurrentTasks = 16;
-          RequestTimeout = 30;
+        NumberOfConcurrentDownloads = 12;
+        NumberOfConcurrentTasks = 16;
+        RequestTimeout = 30;
 
-          MaxMemAlloc = 1024 * 16;
-        };
+        MaxMemAlloc = 1024 * 16;
+      };
     };
   };
 }

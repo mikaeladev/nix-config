@@ -41,7 +41,7 @@ in
     };
 
     gtk2 = {
-      configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+      configLocation = config.xdg.configHome + "/gtk-2.0/gtkrc";
       extraConfig = ''
         gtk-button-images=1
         gtk-cursor-blink=1;

@@ -1,5 +1,5 @@
 {
-  globals,
+  config,
   inputs,
   lib,
   pkgs,
@@ -63,12 +63,11 @@ in
   };
 
   home = {
-    inherit (globals.mainuser) homeDirectory username;
+    inherit (config.globals.mainuser) username homeDirectory;
     stateVersion = "25.05";
   };
 
   news.display = "silent";
 
   programs.home-manager.enable = true;
-  targets.genericLinux.enable = globals.standalone;
 }

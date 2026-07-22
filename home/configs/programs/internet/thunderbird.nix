@@ -1,24 +1,18 @@
 {
   config,
-  globals,
   lib,
   pkgs,
   ...
 }:
 
 let
-  inherit (lib) isAttrs mkIf;
+  inherit (lib) mkIf;
   inherit (config.lib.self) wrapHome;
 in
 
 {
-  config = mkIf (isAttrs globals.storageDevice) {
-    home.packages = [
-      (wrapHome {
-        homePath = "${config.xdg.stateHome}/thunderbird-home";
-        package = pkgs.thunderbird;
-      })
-    ];
+  config = mkIf config.globals.storage.enable {
+    home.packages = [ (wrapHome { package = pkgs.thunderbird; }) ];
 
     xdg.stateFile = {
       "thunderbird-home/.thunderbird/profiles.ini".text = ''
@@ -30,7 +24,7 @@ in
         Default=1
         IsRelative=0
         Name=personal
-        Path=${globals.storageDevice.mountPoint}/thunderbird/profiles/personal
+        Path=${config.globals.storage.mountPoint}/thunderbird/profiles/personal
       '';
     };
   };

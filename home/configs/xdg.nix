@@ -1,6 +1,5 @@
 {
   config,
-  globals,
   lib,
   pkgs,
   ...
@@ -34,7 +33,7 @@ let
 
   baseDirectories = mapAttrs (
     _: value: "${homeDirectory}/${value}"
-  ) globals.xdgBaseDirectoryParts;
+  ) config.globals.xdg;
 
   inherit (baseDirectories)
     cacheHome
@@ -114,29 +113,29 @@ in
       createDirectories = true;
       setSessionVariables = false;
 
-      desktop = "${homeDirectory}/desktop";
-      download = "${homeDirectory}/downloads";
-      projects = "${homeDirectory}/projects";
-      documents = "${homeDirectory}/documents";
+      desktop = homeDirectory + "/desktop";
+      download = homeDirectory + "/downloads";
+      projects = homeDirectory + "/projects";
+      documents = homeDirectory + "/documents";
 
-      templates = "${homeDirectory}/documents/templates";
-      publicShare = "${homeDirectory}/documents/public";
+      templates = homeDirectory + "/documents/templates";
+      publicShare = homeDirectory + "/documents/public";
 
-      pictures = "${homeDirectory}/media/pictures";
-      videos = "${homeDirectory}/media/videos";
-      music = "${homeDirectory}/media/music";
+      pictures = homeDirectory + "/media/pictures";
+      videos = homeDirectory + "/media/videos";
+      music = homeDirectory + "/media/music";
     };
   };
 
   home.preferXdgDirectories = true;
 
   home.sessionVariables = {
-    CUDA_CACHE_PATH = "${cacheHome}/nvidia";
-    GTK2_RC_FILES = "${configHome}/gtk-2.0/gtkrc";
-    FFMPEG_DATADIR = "${dataHome}/ffmpeg";
-    WINEPREFIX = "${dataHome}/wineprefixes/default";
-    BUN_INSTALL = "${dataHome}/bun";
-    CARGO_HOME = "${dataHome}/cargo";
-    RUSTUP_HOME = "${dataHome}/rustup";
+    CUDA_CACHE_PATH = cacheHome + "/nvidia";
+    GTK2_RC_FILES = configHome + "/gtk-2.0/gtkrc";
+    FFMPEG_DATADIR = dataHome + "/ffmpeg";
+    WINEPREFIX = dataHome + "/wineprefixes/default";
+    BUN_INSTALL = dataHome + "/bun";
+    CARGO_HOME = dataHome + "/cargo";
+    RUSTUP_HOME = dataHome + "/rustup";
   };
 }

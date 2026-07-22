@@ -3,22 +3,7 @@
 {
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = [
-      "kvm-amd"
-      "k10temp"
-      "ntsync"
-    ];
-
-    initrd = {
-      availableKernelModules = [
-        "xhci_pci"
-        "ahci"
-        "nvme"
-        "usbhid"
-        "usb_storage"
-        "sd_mod"
-      ];
-    };
+    kernelModules = [ "ntsync" ];
 
     loader = {
       timeout = 10;
@@ -28,7 +13,6 @@
         enable = true;
         maxGenerations = 50;
 
-        # rose-pine
         # https://github.com/rose-pine/limine
         style.graphicalTerminal = {
           palette = "191724;eb6f92;9ccfd8;f6c177;31748f;c4a7e7;9ccfd8;e0def4";
@@ -45,5 +29,12 @@
       useTmpfs = true;
       tmpfsSize = "30%";
     };
+  };
+
+  zramSwap = {
+    enable = true;
+    priority = 100;
+    memoryPercent = 25; # 8G
+    algorithm = "zstd";
   };
 }

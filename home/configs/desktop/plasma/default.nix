@@ -83,7 +83,7 @@ in
 
     workspace = {
       colorScheme = "WhiteSurDark";
-      wallpaper = "${config.xdg.dataHome}/wallpapers/current.png";
+      wallpaper = config.xdg.dataHome + "/wallpapers/current.png";
       widgetStyle = config.qt.style.name;
       iconTheme = config.gtk.iconTheme.name;
       soundTheme = config.gtk.gtk4.extraConfig.gtk-sound-theme-name;

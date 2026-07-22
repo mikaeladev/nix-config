@@ -1,11 +1,11 @@
-{ globals, lib, ... }:
+{ config, lib, ... }:
 
 let
-  inherit (lib) isAttrs mkIf;
+  inherit (lib) mkIf;
 in
 
 {
-  config = mkIf (isAttrs globals.storageDevice) {
+  config = mkIf config.globals.storage.enable {
     programs.zen-browser = {
       enable = true;
       profiles = { };
@@ -13,10 +13,10 @@ in
 
     xdg.configFile =
       let
-        profilesDir = "${globals.storageDevice.mountPoint}/zen/profiles";
+        profilesDir = config.globals.storage.mountPoint + "/zen/profiles";
 
-        homeProfile = "${profilesDir}/home";
-        privateProfile = "${profilesDir}/private";
+        homeProfile = profilesDir + "/home";
+        privateProfile = profilesDir + "/private";
       in
       {
         "zen/profiles.ini".text = ''

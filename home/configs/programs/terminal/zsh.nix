@@ -6,12 +6,12 @@
     enableCompletion = true;
     autosuggestion.enable = false;
     syntaxHighlighting.enable = true;
-    dotDir = "${config.xdg.configHome}/zsh";
+    dotDir = config.xdg.configHome + "/zsh";
 
     history = {
       size = 10000;
       ignoreAllDups = true;
-      path = "${config.xdg.stateHome}/zsh_history";
+      path = config.xdg.stateHome + "/zsh_history";
       ignorePatterns = [
         "exit"
         "clear"
