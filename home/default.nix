@@ -7,7 +7,12 @@
 }:
 
 let
-  inherit (lib) attrNames genAttrs' mkDefault nameValuePair;
+  inherit (lib)
+    attrNames
+    genAttrs'
+    mkDefault
+    nameValuePair
+    ;
 in
 
 {

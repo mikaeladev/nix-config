@@ -11,7 +11,7 @@ let
 
   secretsEnabled = config.globals.secrets;
   secretsCfg = config.age.secrets;
-  
+
   rootPass = mkIf secretsEnabled secretsCfg."passwords/root".path;
   mainuserPass = mkIf secretsEnabled secretsCfg."passwords/mainuser".path;
 in
