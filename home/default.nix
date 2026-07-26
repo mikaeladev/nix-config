@@ -7,7 +7,7 @@
 }:
 
 let
-  inherit (lib) attrNames genAttrs' nameValuePair;
+  inherit (lib) attrNames genAttrs' mkDefault nameValuePair;
 in
 
 {
@@ -23,7 +23,7 @@ in
   ];
 
   nix = {
-    package = pkgs.nixVersions.latest;
+    package = mkDefault pkgs.nixVersions.latest;
     assumeXdg = true;
 
     # keep nixpkgs channel in sync with this flake

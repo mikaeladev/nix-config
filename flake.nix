@@ -111,10 +111,11 @@
       };
 
       nixosConfigurations = {
-        nixos = mkNixosConfig {
+        nixos-vm = mkNixosConfig {
           inherit specialArgs;
           modules = [
-            # ./nixos/machines/nixos
+            ./nixos/machines/nixos-vm
+            ./nixos/common
             ./globals.nix
           ];
         };

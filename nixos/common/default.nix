@@ -11,6 +11,9 @@ let
 
   secretsEnabled = config.globals.secrets;
   secretsCfg = config.age.secrets;
+  
+  rootPass = mkIf secretsEnabled secretsCfg."passwords/root".path;
+  mainuserPass = mkIf secretsEnabled secretsCfg."passwords/mainuser".path;
 in
 
 {
@@ -40,8 +43,6 @@ in
     nvidia.acceptLicense = true;
   };
 
-  system.stateVersion = "25.05";
-
   age.secrets = mkIf secretsEnabled {
     "networks".file = ../../secrets/networks.age;
     "passwords/root".file = ../../secrets/passwords/root.age;
@@ -50,18 +51,19 @@ in
 
   users.users = {
     root = {
-      uid = 0;
-      shell = pkgs.zsh;
+      isSystemUser = true;
       initialPassword = "changeme";
-      hashedPasswordFile = mkIf secretsEnabled secretsCfg."passwords/root".path;
+      hashedPasswordFile = rootPass;
+      shell = pkgs.zsh;
     };
 
     mainuser = {
-      uid = 1000;
-      shell = pkgs.zsh;
-      description = config.globals.mainuser.nickname;
+      isNormalUser = true;
       initialPassword = "changeme";
-      hashedPasswordFile = mkIf secretsEnabled secretsCfg."passwords/mainuser".path;
+      hashedPasswordFile = mainuserPass;
+      description = config.globals.mainuser.nickname;
+      home = config.globals.mainuser.homeDirectory;
+      shell = pkgs.zsh;
       extraGroups = [
         "networkmanager"
         "wheel"
