@@ -38,7 +38,7 @@ in
 
   home.packages = [
     # nixos uses `programs.steam.extraCompatPackages`
-    pkgs.protonplus
+    (wrapVulkan pkgs.protonplus)
 
     # stops nvidia-settings from cluttering $HOME
     (wrapPackage {
