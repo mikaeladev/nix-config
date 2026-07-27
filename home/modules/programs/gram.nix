@@ -67,6 +67,23 @@ in
 
     # single-file configs #
 
+    settings = mkOption {
+      type = with types; either (attrsOf jsonFormat.type) lines;
+      default = { };
+      example = {
+        buffer_font_family = "JetBrains Mono";
+        buffer_font_weight = 400;
+        buffer_font_size = 14;
+      };
+      description = ''
+        Configuration to write to {file}`settings.jsonc`.
+
+        See the Gram [docs] for more information.
+
+        [docs]: https://gram-editor.com/docs/configuring-gram/
+      '';
+    };
+
     debugger = mkOption {
       type = with types; either (listOf jsonFormat.type) lines;
       default = [ ];
@@ -105,23 +122,6 @@ in
         List of [key bindings] to write to {file}`keymap.jsonc`.
 
         [key bindings]: https://gram-editor.com/docs/key-bindings/
-      '';
-    };
-
-    settings = mkOption {
-      type = with types; either (attrsOf jsonFormat.type) lines;
-      default = { };
-      example = {
-        buffer_font_family = "JetBrains Mono";
-        buffer_font_weight = 400;
-        buffer_font_size = 14;
-      };
-      description = ''
-        Configuration to write to {file}`settings.jsonc`.
-
-        See the Gram [docs] for more information.
-
-        [docs]: https://gram-editor.com/docs/configuring-gram/
       '';
     };
 
@@ -216,14 +216,14 @@ in
           suffix: value: if (hasSuffix suffix value) then value else (value + suffix);
       in
       {
+        "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
+          mkFileAttrs "settings.jsonc" cfg.settings
+        );
         "gram/debug.jsonc" = mkIf (cfg.debugger != [ ]) (
           mkFileAttrs "debug.jsonc" cfg.debugger
         );
         "gram/keymap.jsonc" = mkIf (cfg.keymaps != [ ]) (
           mkFileAttrs "keymap.jsonc" cfg.keymaps
-        );
-        "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
-          mkFileAttrs "settings.jsonc" cfg.settings
         );
         "gram/tasks.jsonc" = mkIf (cfg.tasks != [ ]) (
           mkFileAttrs "tasks.jsonc" cfg.tasks
