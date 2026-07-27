@@ -10,12 +10,15 @@ let
     escapeShellArgs
     getName
     getVersion
+    hasSuffix
     isString
     literalExpression
+    mapAttrs'
     mkEnableOption
     mkIf
     mkOption
     mkPackageOption
+    nameValuePair
     optional
     types
     ;
@@ -35,6 +38,8 @@ in
 {
   options.programs.gram = {
     enable = mkEnableOption "Gram";
+
+    # packages #
 
     package = mkPackageOption pkgs "gram" { nullable = true; };
 
@@ -59,6 +64,8 @@ in
         - <https://github.com/DuskSystems/nix-zed-extensions>
       '';
     };
+
+    # single-file configs #
 
     debugger = mkOption {
       type = with types; either (listOf jsonFormat.type) lines;
@@ -142,6 +149,30 @@ in
         [tasks]: https://gram-editor.com/docs/tasks/
       '';
     };
+
+    # multi-file configs #
+
+    snippets = mkOption {
+      type = with types; attrsOf (either (attrsOf jsonFormat.type) lines);
+      default = { };
+      example = {
+        javascript = {
+          "Log to console" = {
+            prefix = "log";
+            description = "Logs to console";
+            body = [
+              "console.info(\"Hello, \${1:World}!\")"
+              "$0"
+            ];
+          };
+        };
+      };
+      description = ''
+        Set of [snippets] to write to {file}`snippets/‹name›.json`.
+
+        [snippets]: https://gram-editor.com/docs/snippets/
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -172,32 +203,39 @@ in
         })
     );
 
-    xdg.configFile = {
-      "gram/debug.jsonc" = mkIf (cfg.debugger != [ ]) (
-        if isString cfg.debugger then
-          { text = cfg.debugger; }
-        else
-          { source = jsonFormat.generate "debug.jsonc" cfg.debugger; }
-      );
-      "gram/keymap.jsonc" = mkIf (cfg.keymaps != [ ]) (
-        if isString cfg.keymaps then
-          { text = cfg.keymaps; }
-        else
-          { source = jsonFormat.generate "keymap.jsonc" cfg.keymaps; }
-      );
-      "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
-        if isString cfg.settings then
-          { text = cfg.settings; }
-        else
-          { source = jsonFormat.generate "settings.jsonc" cfg.settings; }
-      );
-      "gram/tasks.jsonc" = mkIf (cfg.tasks != [ ]) (
-        if isString cfg.tasks then
-          { text = cfg.tasks; }
-        else
-          { source = jsonFormat.generate "tasks.jsonc" cfg.tasks; }
-      );
-    };
+    xdg.configFile =
+      let
+        mkFileAttrs =
+          name: value:
+          if isString value then
+            { text = value; }
+          else
+            { source = jsonFormat.generate name value; };
+
+        withSuffix =
+          suffix: value: if (hasSuffix suffix value) then value else (value + suffix);
+      in
+      {
+        "gram/debug.jsonc" = mkIf (cfg.debugger != [ ]) (
+          mkFileAttrs "debug.jsonc" cfg.debugger
+        );
+        "gram/keymap.jsonc" = mkIf (cfg.keymaps != [ ]) (
+          mkFileAttrs "keymap.jsonc" cfg.keymaps
+        );
+        "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
+          mkFileAttrs "settings.jsonc" cfg.settings
+        );
+        "gram/tasks.jsonc" = mkIf (cfg.tasks != [ ]) (
+          mkFileAttrs "tasks.jsonc" cfg.tasks
+        );
+      }
+      // (mapAttrs' (
+        name: value:
+        let
+          suffixedName = withSuffix ".json" name;
+        in
+        nameValuePair ("gram/snippets/" + suffixedName) (mkFileAttrs suffixedName value)
+      ) cfg.snippets);
 
     home.file."${dataDir}/extensions/installed" = {
       recursive = true;
