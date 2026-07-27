@@ -38,21 +38,66 @@ in
 
     package = mkPackageOption pkgs "gram" { nullable = true; };
 
-    extensionPackages = mkOption {
-      type = with types; listOf package;
-      default = [ ];
-      example = literalExpression "with pkgs.zed-extensions; [ toml ]";
-      description = ''
-        List of extension packages to install.
-      '';
-    };
-
     extraPackages = mkOption {
       type = with types; listOf package;
       default = [ ];
       example = literalExpression "with pkgs; [ nil ]";
       description = ''
-        List of extra packages available to the binary.
+        List of extra packages available to Gram.
+      '';
+    };
+
+    extensionPackages = mkOption {
+      type = with types; listOf package;
+      default = [ ];
+      example = literalExpression "with gram-extensions; [ catppuccin ]";
+      description = ''
+        List of extension packages to install.
+
+        See also:
+        - <https://codeberg.org/niklaskorz/nix-gram-extensions>
+        - <https://github.com/DuskSystems/nix-zed-extensions>
+      '';
+    };
+
+    debugger = mkOption {
+      type = with types; either (listOf jsonFormat.type) lines;
+      default = [ ];
+      example = [
+        {
+          label = "Example Start debugger config";
+          adapter = "Example adapter name";
+          request = "launch";
+          program = "path_to_program";
+          cwd = "$GRAM_WORKTREE_ROOT";
+        }
+      ];
+      description = ''
+        List of [debug tasks] to write to {file}`debug.jsonc`.
+
+        [debug tasks]: https://gram-editor.com/docs/debugger/
+      '';
+    };
+
+    keymaps = mkOption {
+      type = with types; either (listOf jsonFormat.type) lines;
+      default = [ ];
+      example = [
+        {
+          bindings = {
+            ctrl-right = "editor::SelectLargerSyntaxNode";
+            ctrl-left = "editor::SelectSmallerSyntaxNode";
+          };
+        }
+        {
+          context = "ProjectPanel && not_editing";
+          bindings.o = "project_panel::Open";
+        }
+      ];
+      description = ''
+        List of [key bindings] to write to {file}`keymap.jsonc`.
+
+        [key bindings]: https://gram-editor.com/docs/key-bindings/
       '';
     };
 
@@ -73,50 +118,28 @@ in
       '';
     };
 
-    keymaps = mkOption {
+    tasks = mkOption {
       type = with types; either (listOf jsonFormat.type) lines;
       default = [ ];
       example = [
         {
-          bindings = {
-            ctrl-right = "editor::SelectLargerSyntaxNode";
-            ctrl-left = "editor::SelectSmallerSyntaxNode";
-          };
-        }
-        {
-          context = "ProjectPanel && not_editing";
-          bindings = {
-            "o" = "project_panel::Open";
-          };
-        }
-      ];
-      description = ''
-        List of key bindings to write to {file}`keymap.jsonc`.
-
-        See the Gram [docs] for more information.
-
-        [docs]: https://gram-editor.com/docs/key-bindings/
-      '';
-    };
-
-    debugger = mkOption {
-      type = with types; either (listOf jsonFormat.type) lines;
-      default = [ ];
-      example = [
-        {
-          label = "Example Start debugger config";
-          adapter = "Example adapter name";
-          request = "launch";
-          program = "path_to_program";
-          cwd = "$GRAM_WORKTREE_ROOT";
+          label = "Example task";
+          command = "for i in {1..5}; do echo \"Hello $i/5\"; sleep 1; done";
+          env.foo = "bar";
+          use_new_terminal = false;
+          allow_concurrent_runs = false;
+          reveal = "always";
+          hide = "never";
+          shell = "system";
+          show_summary = true;
+          show_command = true;
+          save = "none";
         }
       ];
       description = ''
-        List of debug configurations to write to {file}`debug.jsonc`.
+        List of [tasks] to write to {file}`tasks.jsonc`.
 
-        See the Gram [docs] for more information.
-
-        [docs]: https://gram-editor.com/docs/debugger/
+        [tasks]: https://gram-editor.com/docs/tasks/
       '';
     };
   };
@@ -127,7 +150,7 @@ in
         assertion = cfg.extraPackages != [ ] -> cfg.package != null;
         message = ''
           The `programs.gram.extraPackages` option requires that `programs.gram.package`
-          not be null in order to be applied.
+          not be null.
         '';
       }
     ];
@@ -150,11 +173,11 @@ in
     );
 
     xdg.configFile = {
-      "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
-        if isString cfg.settings then
-          { text = cfg.settings; }
+      "gram/debug.jsonc" = mkIf (cfg.debugger != [ ]) (
+        if isString cfg.debugger then
+          { text = cfg.debugger; }
         else
-          { source = jsonFormat.generate "settings.jsonc" cfg.settings; }
+          { source = jsonFormat.generate "debug.jsonc" cfg.debugger; }
       );
       "gram/keymap.jsonc" = mkIf (cfg.keymaps != [ ]) (
         if isString cfg.keymaps then
@@ -162,11 +185,17 @@ in
         else
           { source = jsonFormat.generate "keymap.jsonc" cfg.keymaps; }
       );
-      "gram/debug.jsonc" = mkIf (cfg.debugger != [ ]) (
-        if isString cfg.debugger then
-          { text = cfg.debugger; }
+      "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
+        if isString cfg.settings then
+          { text = cfg.settings; }
         else
-          { source = jsonFormat.generate "debug.jsonc" cfg.debugger; }
+          { source = jsonFormat.generate "settings.jsonc" cfg.settings; }
+      );
+      "gram/tasks.jsonc" = mkIf (cfg.tasks != [ ]) (
+        if isString cfg.tasks then
+          { text = cfg.tasks; }
+        else
+          { source = jsonFormat.generate "tasks.jsonc" cfg.tasks; }
       );
     };
 
