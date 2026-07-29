@@ -20,7 +20,7 @@ in
     }:
 
     stdenv.mkDerivation (finalAttrs: {
-      pname = "apple-emoji-ttf";
+      pname = "apple-color-emoji";
       version = "2026.07.22";
 
       src = fetchurl {
@@ -61,12 +61,34 @@ in
       lib,
       stdenv,
       fetchurl,
+      writeText,
       cpio,
       gzip,
       undmg,
       xar,
       ...
     }:
+
+    let
+      fontConf = writeText "20-apple-sf-pro.conf" ''
+        <?xml version="1.0"?>
+        <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+        <fontconfig>
+          <alias>
+            <family>serif</family>
+            <prefer><family>SF Pro</family></prefer>
+          </alias>
+          <alias>
+            <family>sans-serif</family>
+            <prefer><family>SF Pro</family></prefer>
+          </alias>
+          <alias>
+            <family>monospace</family>
+            <prefer><family>SF Pro</family></prefer>
+          </alias>
+        </fontconfig>
+      '';
+    in
 
     stdenv.mkDerivation (finalAttrs: {
       pname = "apple-sf-pro";
@@ -97,6 +119,8 @@ in
 
       installPhase = ''
         runHook preInstall
+
+        install -Dm644 ${fontConf} $out/etc/fonts/conf.d/20-apple-sf-pro.conf
 
         install -Dm644 Library/Fonts/*.ttf \
           -t $out/share/fonts/truetype/${finalAttrs.pname}
