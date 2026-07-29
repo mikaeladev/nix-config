@@ -10,25 +10,49 @@ let
 in
 
 {
-  apple-emoji = callPackage (
-    { stdenv, fetchurl, ... }:
+  apple-color-emoji = callPackage (
+    {
+      lib,
+      stdenv,
+      fetchurl,
+      rpmextract,
+      ...
+    }:
 
     stdenv.mkDerivation (finalAttrs: {
       pname = "apple-emoji-ttf";
-      version = "26.2.1";
+      version = "2026.07.22";
 
       src = fetchurl {
-        url = "https://github.com/samuelngs/apple-emoji-linux/releases/download/v${finalAttrs.version}/AppleColorEmoji.ttf";
-        sha256 = "0g84h4xk7hvy9bsfvy15sx2s7plfx2qnqqpm686vb6idh6cgkdg7";
+        name = "fonts-apple-color-emoji.rpm";
+        url = "https://github.com/samuelngs/apple-emoji-ttf/releases/download/macos-26-20260722-484daf4e/fonts-apple-color-emoji.rpm";
+        sha256 = "sha256-TsoHU6YHXxQN6AJon6W0Vjl1Uq9VlnoIcmo5WQhhY+0=";
       };
 
-      dontUnpack = true;
+      nativeBuildInputs = [ rpmextract ];
+
+      unpackPhase = ''
+        rpmextract $src
+      '';
 
       installPhase = ''
         runHook preInstall
-        install -Dm644 "$src" "$out/share/fonts/truetype/AppleColorEmoji.ttf"
+
+        mkdir $out
+        cp -r etc $out/etc
+        cp -r usr/share $out/share
+
         runHook postInstall
       '';
+
+      meta = {
+        description = "Apple's vibrant color emojis";
+        homepage = "https://github.com/samuelngs/apple-emoji-ttf";
+        sourceProvenance = lib.sourceTypes.binaryNativeCode;
+        maintainers = with lib.maintainers; [ mikaeladev ];
+        license = lib.licenses.unfree;
+        platforms = lib.platforms.linux;
+      };
     })
   ) { };
 
@@ -74,8 +98,11 @@ in
       installPhase = ''
         runHook preInstall
 
-        install -Dm644 -t $out/share/fonts/truetype Library/Fonts/*.ttf
-        install -Dm644 -t $out/share/fonts/opentype Library/Fonts/*.otf
+        install -Dm644 Library/Fonts/*.ttf \
+          -t $out/share/fonts/truetype/${finalAttrs.pname}
+
+        install -Dm644 Library/Fonts/*.otf \
+          -t $out/share/fonts/opentype/${finalAttrs.pname}
 
         runHook postInstall
       '';
@@ -83,6 +110,7 @@ in
       meta = {
         description = "Apple's SF Pro typeface";
         homepage = "https://developer.apple.com/fonts/";
+        sourceProvenance = lib.sourceTypes.binaryNativeCode;
         maintainers = with lib.maintainers; [ mikaeladev ];
         license = lib.licenses.unfree;
         platforms = lib.platforms.linux;

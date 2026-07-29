@@ -18,7 +18,7 @@ in
     pkgs.nerd-fonts.jetbrains-mono
 
     # emoji fonts
-    pkgs.apple-emoji
+    pkgs.apple-color-emoji
   ];
 
   gtk = {
