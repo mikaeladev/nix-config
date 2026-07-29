@@ -5,7 +5,6 @@
     ./bun.nix
     ./git.nix
     ./gram.nix
-    ./zed.nix
   ];
 
   home.packages = with pkgs; [
