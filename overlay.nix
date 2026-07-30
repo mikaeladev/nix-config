@@ -38,9 +38,8 @@ in
       installPhase = ''
         runHook preInstall
 
-        mkdir $out
-        cp -r etc $out/etc
-        cp -r usr/share $out/share
+        install -Dm644 usr/share/fonts/truetype/apple-color-emoji/* \
+          -t $out/share/fonts/truetype/AppleColorEmoji
 
         runHook postInstall
       '';
@@ -61,34 +60,12 @@ in
       lib,
       stdenv,
       fetchurl,
-      writeText,
       cpio,
       gzip,
       undmg,
       xar,
       ...
     }:
-
-    let
-      fontConf = writeText "20-apple-sf-pro.conf" ''
-        <?xml version="1.0"?>
-        <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-        <fontconfig>
-          <alias>
-            <family>serif</family>
-            <prefer><family>SF Pro</family></prefer>
-          </alias>
-          <alias>
-            <family>sans-serif</family>
-            <prefer><family>SF Pro</family></prefer>
-          </alias>
-          <alias>
-            <family>monospace</family>
-            <prefer><family>SF Pro</family></prefer>
-          </alias>
-        </fontconfig>
-      '';
-    in
 
     stdenv.mkDerivation (finalAttrs: {
       pname = "apple-sf-pro";
@@ -120,13 +97,11 @@ in
       installPhase = ''
         runHook preInstall
 
-        install -Dm644 ${fontConf} $out/etc/fonts/conf.d/20-apple-sf-pro.conf
-
         install -Dm644 Library/Fonts/*.ttf \
-          -t $out/share/fonts/truetype/${finalAttrs.pname}
+          -t $out/share/fonts/truetype/SFPro
 
         install -Dm644 Library/Fonts/*.otf \
-          -t $out/share/fonts/opentype/${finalAttrs.pname}
+          -t $out/share/fonts/opentype/SFPro
 
         runHook postInstall
       '';

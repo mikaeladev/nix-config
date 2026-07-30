@@ -1,8 +1,15 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  generalFont = "SF Pro";
-  monospaceFont = "JetBrains Mono";
+  inherit (lib) head;
+
+  fontCfg = config.fonts.fontconfig;
+
   soundTheme = "ocean";
   cursorTheme = "pixel-cursors-default";
   cursorPackage = pkgs.pixel-cursors;
@@ -36,7 +43,7 @@ in
     };
 
     font = {
-      name = generalFont;
+      name = head fontCfg.defaultFonts.sansSerif;
       size = 10;
     };
 
@@ -93,19 +100,6 @@ in
         libsForQt5.qtstyleplugin-kvantum
         kdePackages.qtstyleplugin-kvantum
       ];
-    };
-  };
-
-  fonts.fontconfig = {
-    enable = true;
-    antialiasing = true;
-    subpixelRendering = "none";
-    hinting = "slight";
-
-    defaultFonts = {
-      serif = [ generalFont ];
-      sansSerif = [ generalFont ];
-      monospace = [ monospaceFont ];
     };
   };
 
