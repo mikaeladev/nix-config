@@ -1,5 +1,11 @@
+{ config, lib, ... }:
+
+let
+  inherit (lib) mkIf;
+in
+
 {
-  services.openlinkhub = {
+  services.openlinkhub = mkIf config.globals.standalone {
     enable = true;
 
     settings = {
