@@ -36,6 +36,7 @@ in
       "root"
       "@wheel"
     ];
+    use-xdg-base-directories = true;
   };
 
   nixpkgs.config = {
