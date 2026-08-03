@@ -103,6 +103,11 @@
       FREETYPE_PROPERTIES = "cff:no-stem-darkening=0 autofitter:no-stem-darkening=0";
       # enable PIP wayland protocol
       KWIN_WAYLAND_SUPPORT_XX_PIP_V1 = 1;
+      # use custom xdg directories
+      XDG_CACHE_HOME = "$HOME/" + config.globals.xdg.cacheHome;
+      XDG_CONFIG_HOME = "$HOME/" + config.globals.xdg.configHome;
+      XDG_DATA_HOME = "$HOME/" + config.globals.xdg.dataHome;
+      XDG_STATE_HOME = "$HOME/" + config.globals.xdg.stateHome;
     };
   };
 
