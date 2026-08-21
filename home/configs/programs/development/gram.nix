@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+
+let
+  inherit (lib) getExe;
+in
 
 {
   programs.gram = {
@@ -143,6 +147,13 @@
           };
         };
       };
+
+      lsp = {
+        rust-analyzer.binary = {
+          path = getExe pkgs.rust-analyzer;
+          arguments = [ ];
+        };
+      };
     };
 
     extensionPackages = with pkgs.zed-extensions; [
@@ -165,14 +176,20 @@
       # themes
       charmed-icons
       one-dark-pro
-
-      # other bits
-      discord-presence
     ];
 
     extraPackages = with pkgs; [
+      # formatters
+      shfmt
+
+      # language servers
       nixd
+      package-version-server
       shellcheck
+      vscode-json-languageserver
+
+      # runtimes
+      nodejs
     ];
   };
 }
