@@ -7,12 +7,16 @@
 
 let
   inherit (lib)
+    concatStringsSep
     escapeShellArgs
+    filterAttrs
     getName
     getVersion
+    hasAttr
     hasSuffix
     isString
     literalExpression
+    maintainers
     mapAttrs'
     mkEnableOption
     mkIf
@@ -28,14 +32,27 @@ let
 
   cfg = config.programs.gram;
 
-  dataDir =
-    if pkgs.stdenv.isDarwin then
-      "Library/Application Support/Gram"
-    else
-      (config.xdg.dataHome + "/gram");
+  extensionsDir = runCommand "gram-extensions" { } ''
+    set -euo pipefail
+
+    drvs=(${escapeShellArgs cfg.extensionPackages})
+    paths=(/share/gram/extensions /share/zed/extensions)
+
+    mkdir $out/
+
+    for drv in "''${drvs[@]}"; do
+      for path in "''${paths[@]}"; do
+        if [ -e "$drv/$path" ]; then
+          ln -s "$drv/$path"/* $out/
+        fi
+      done
+    done
+  '';
 in
 
 {
+  meta.maintainers = with maintainers; [ mikaeladev ];
+
   options.programs.gram = {
     enable = mkEnableOption "Gram";
 
@@ -76,11 +93,9 @@ in
         buffer_font_size = 14;
       };
       description = ''
-        Configuration to write to {file}`settings.jsonc`.
+        Set of [settings] to write to {file}`settings.jsonc`.
 
-        See the Gram [docs] for more information.
-
-        [docs]: https://gram-editor.com/docs/configuring-gram/
+        [settings]: https://gram-editor.com/docs/configuring-gram/
       '';
     };
 
@@ -131,7 +146,7 @@ in
       example = [
         {
           label = "Example task";
-          command = "for i in {1..5}; do echo \"Hello $i/5\"; sleep 1; done";
+          command = ''for i in {1..5}; do echo "Hello $i/5"; sleep 1; done'';
           env.foo = "bar";
           use_new_terminal = false;
           allow_concurrent_runs = false;
@@ -156,12 +171,22 @@ in
       type = with types; attrsOf (either (attrsOf jsonFormat.type) lines);
       default = { };
       example = {
+        html = {
+          "Define doctype" = {
+            prefix = "doctype";
+            description = "Defines the document type";
+            body = [
+              "<!DOCTYPE>"
+              "$1"
+            ];
+          };
+        };
         javascript = {
           "Log to console" = {
             prefix = "log";
             description = "Logs to console";
             body = [
-              "console.info(\"Hello, \${1:World}!\")"
+              ''console.info("Hello, ''${1:World}!")''
               "$0"
             ];
           };
@@ -171,6 +196,42 @@ in
         Set of [snippets] to write to {file}`snippets/‹name›.json`.
 
         [snippets]: https://gram-editor.com/docs/snippets/
+      '';
+    };
+
+    themes = mkOption {
+      type = with types; attrsOf (either (attrsOf jsonFormat.type) lines);
+      default = { };
+      example = literalExpression ''
+        {
+          my-cool-theme = {
+            name = "My Cool Theme";
+            author = "You!";
+            themes = [
+              {
+                name = "My Cool Dark Theme";
+                appearance = "dark";
+                style = {
+                  "editor.background" = "#000";
+                  # ...
+                };
+              }
+              {
+                name = "My Cool Light Theme";
+                appearance = "light";
+                style = {
+                  "editor.background" = "#fff";
+                  # ...
+                };
+              }
+            ];
+          };
+        }
+      '';
+      description = ''
+        Set of [local themes] to write to {file}`themes/‹name›.json`.
+
+        [local themes]: https://gram-editor.com/docs/themes/
       '';
     };
   };
@@ -184,10 +245,29 @@ in
           not be null.
         '';
       }
-    ];
+    ]
+    ++ (
+      let
+        mkSnippetException = scope: substitute: {
+          assertion =
+            !((hasAttr scope cfg.snippets) || (hasAttr (scope + ".json") cfg.snippets));
+          message = ''
+            The snippet scope defined at `programs.gram.snippets.${scope}` is incorrect,
+            use `programs.gram.snippets.${substitute}` instead.
+
+            (reasoning: <https://gram-editor.com/docs/snippets/>)
+          '';
+        };
+      in
+      [
+        (mkSnippetException "global" "snippets")
+        (mkSnippetException "jsx" "javascript")
+        (mkSnippetException "plain" "plaintext")
+      ]
+    );
 
     home.packages = optional (cfg.package != null) (
-      if cfg.extraPackages == [ ] then
+      if cfg.extraPackages == [ ] && cfg.extensionPackages == [ ] then
         cfg.package
       else
         (symlinkJoin {
@@ -196,65 +276,58 @@ in
           paths = [ cfg.package ];
           preferLocalBuild = true;
           nativeBuildInputs = [ pkgs.makeWrapper ];
-          postBuild = ''
-            wrapProgram $out/bin/${cfg.package.meta.mainProgram or "gram"} \
-              --suffix PATH : ${lib.makeBinPath cfg.extraPackages}
-          '';
+          postBuild =
+            let
+              optionalArgs =
+                (optional (
+                  cfg.extraPackages != [ ]
+                ) "--suffix PATH : ${lib.makeBinPath cfg.extraPackages}")
+                ++ (optional (
+                  cfg.extensionPackages != [ ]
+                ) "--set GRAM_SYSTEM_EXTENSIONS_DIR ${extensionsDir}");
+            in
+            ''
+              wrapProgram $out/bin/${cfg.package.meta.mainProgram or "gram"} \
+                ${concatStringsSep " " optionalArgs}
+            '';
         })
     );
 
+    home.sessionVariables = mkIf (
+      cfg.package == null && cfg.extensionPackages != [ ]
+    ) { GRAM_SYSTEM_EXTENSIONS_DIR = extensionsDir; };
+
     xdg.configFile =
       let
-        mkFileAttrs =
+        withSuffix =
+          suffix: value: if (hasSuffix suffix value) then value else (value + suffix);
+
+        mkFileValue =
           name: value:
           if isString value then
             { text = value; }
           else
             { source = jsonFormat.generate name value; };
 
-        withSuffix =
-          suffix: value: if (hasSuffix suffix value) then value else (value + suffix);
+        mapConfigAttrs =
+          prefix: suffix:
+          mapAttrs' (
+            name: value:
+            let
+              suffixedName = withSuffix suffix name;
+            in
+            nameValuePair (prefix + suffixedName) (mkFileValue suffixedName value)
+          );
+
+        singleFileConfigs = filterAttrs (_: value: value != null) {
+          settings = if (cfg.settings != { }) then cfg.settings else null;
+          debug = if (cfg.debugger != [ ]) then cfg.debugger else null;
+          keymap = if (cfg.keymaps != [ ]) then cfg.keymaps else null;
+          tasks = if (cfg.tasks != [ ]) then cfg.tasks else null;
+        };
       in
-      {
-        "gram/settings.jsonc" = mkIf (cfg.settings != { }) (
-          mkFileAttrs "settings.jsonc" cfg.settings
-        );
-        "gram/debug.jsonc" = mkIf (cfg.debugger != [ ]) (
-          mkFileAttrs "debug.jsonc" cfg.debugger
-        );
-        "gram/keymap.jsonc" = mkIf (cfg.keymaps != [ ]) (
-          mkFileAttrs "keymap.jsonc" cfg.keymaps
-        );
-        "gram/tasks.jsonc" = mkIf (cfg.tasks != [ ]) (
-          mkFileAttrs "tasks.jsonc" cfg.tasks
-        );
-      }
-      // (mapAttrs' (
-        name: value:
-        let
-          suffixedName = withSuffix ".json" name;
-        in
-        nameValuePair ("gram/snippets/" + suffixedName) (mkFileAttrs suffixedName value)
-      ) cfg.snippets);
-
-    home.file."${dataDir}/extensions/installed" = {
-      recursive = true;
-      source = runCommand "gram-extensions" { } ''
-        set -euo pipefail
-
-        drvs=(${escapeShellArgs cfg.extensionPackages})
-        paths=(/share/gram/extensions /share/zed/extensions)
-
-        mkdir $out/
-
-        for drv in "''${drvs[@]}"; do
-          for path in "''${paths[@]}"; do
-            if [ -e "$drv/$path" ]; then
-              ln -s "$drv/$path"/* $out/
-            fi
-          done
-        done
-      '';
-    };
+      (mapConfigAttrs "gram/" ".jsonc" singleFileConfigs)
+      // (mapConfigAttrs "gram/snippets/" ".json" cfg.snippets)
+      // (mapConfigAttrs "gram/themes/" ".json" cfg.themes);
   };
 }
