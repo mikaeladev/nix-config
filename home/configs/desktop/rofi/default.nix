@@ -7,9 +7,11 @@ in
 {
   programs.rofi = {
     enable = true;
-    cycle = false;
-    modes = [ "drun" ];
-    terminal = getExe config.programs.kitty.package;
     theme = ./theme.rasi;
+    settings = {
+      cycle = false;
+      modes = [ "drun" ];
+      terminal = getExe config.programs.kitty.package;
+    };
   };
 }

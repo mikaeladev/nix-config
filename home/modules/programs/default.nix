@@ -1,6 +1,1 @@
-{
-  imports = [
-    ./gram.nix
-    ./krita.nix
-  ];
-}
+{ imports = [ ./krita.nix ]; }
