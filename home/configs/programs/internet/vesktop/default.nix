@@ -1,13 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ lib, ... }:
 
 let
   inherit (lib) fromJSON readFile;
-  inherit (config.lib.self) patchDesktopItemExec;
 in
 
 {
@@ -31,7 +25,7 @@ in
 
       minimizeToTray = true;
       clickTrayToShowHide = true;
-      autoStartMinimized = true;
+      autoStartMinimized = false;
 
       spellCheckLanguages = [
         "en-GB"
@@ -40,7 +34,7 @@ in
     };
 
     vencord = {
-      themes."system24" = ./theme.css;
+      themes.system24 = ./theme.css;
 
       settings = {
         autoUpdate = false;
@@ -72,15 +66,4 @@ in
       };
     };
   };
-
-  nixpkgs.config.permittedInsecurePackages = [
-    # https://github.com/NixOS/nixpkgs/issues/537847
-    "electron-40.10.5"
-  ];
-
-  xdg.autostart.entries = [
-    (patchDesktopItemExec (pkgs.vesktop + "/share/applications/vesktop.desktop") (
-      config.home.profileDirectory + "/bin/vesktop"
-    ))
-  ];
 }

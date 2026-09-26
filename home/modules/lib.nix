@@ -8,23 +8,11 @@
 
 let
   inherit (lib) getExe getName;
-  inherit (pkgs) runCommand writeShellScriptBin;
+  inherit (pkgs) writeShellScriptBin;
 in
 
 {
   lib.self = rec {
-    patchDesktopItemExec =
-      src: value:
-      let
-        baseName = baseNameOf src;
-      in
-      (runCommand baseName { } ''
-        mkdir $out
-        substitute '${src}' $out/'${baseName}' --replace-fail \
-          "$(cat '${src}' | grep 'Exec=.*')" 'Exec=${value}'
-      '')
-      + "/${baseName}";
-
     wrapHome =
       {
         homePath ? "${config.xdg.stateHome}/${getName package}-home",
