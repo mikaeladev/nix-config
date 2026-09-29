@@ -40,6 +40,9 @@ in
     # nixos uses `programs.steam.extraCompatPackages`
     (wrapVulkan pkgs.protonplus)
 
+    # spicetify module has no package override for spiced spotify
+    (wrapVulkan config.programs.spicetify.spicedSpotify)
+
     # stops nvidia-settings from cluttering $HOME
     (wrapPackage {
       flags."--config" = config.xdg.configHome + "/nvidia/settings";
@@ -48,8 +51,11 @@ in
   ];
 
   programs = {
+    spicetify.enable = mkForce false; # conflicts with above
+
     gram.package = wrapVulkan pkgs.gram;
     prismlauncher.package = wrapVulkan pkgs.prismlauncher;
+    vesktop.package = wrapVulkan pkgs.vesktop;
     zed-editor.package = wrapVulkan pkgs.zed-editor;
   };
 
