@@ -7,5 +7,5 @@
   ];
 
   # count your days.......
-  home.packages = [ pkgs.limo ];
+  home.packages = [ (pkgs.limo.override { stdenv = pkgs.gcc15Stdenv; }) ];
 }
