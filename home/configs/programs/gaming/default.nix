@@ -6,6 +6,9 @@
     ./steam.nix
   ];
 
-  # count your days.......
-  home.packages = [ (pkgs.limo.override { stdenv = pkgs.gcc15Stdenv; }) ];
+  home.packages = [
+    pkgs.amethyst-mod-manager
+    # count your days.......
+    (pkgs.limo.override { stdenv = pkgs.gcc15Stdenv; })
+  ];
 }

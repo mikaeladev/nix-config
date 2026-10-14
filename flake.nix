@@ -50,6 +50,11 @@
 
     # packages #
 
+    amethyst-mod-manager = {
+      url = "github:ChrisDKN/Amethyst-Mod-Manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     pixel-cursors = {
       url = "github:mikaeladev/pixel-cursors/cebd9ab";
       inputs.nixpkgs.follows = "nixpkgs";

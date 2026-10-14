@@ -12,6 +12,7 @@ let
   withExtAttrs = attrs: mapAttrs (_: value: withExt value) attrs;
 
   mimeApps = withExtAttrs {
+    amethyst = "io.github.Amethyst.Mod.Manager";
     aseprite = "aseprite";
     dolphin = "org.kde.dolphin";
     gram = "app.liten.Gram";
@@ -55,6 +56,7 @@ in
       associations.added = {
         "x-scheme-handler/discord" = withExt "vesktop";
         "x-scheme-handler/gram" = mimeApps.gram;
+        "x-scheme-handler/nxm" = mimeApps.amethyst;
       };
 
       defaultApplications =

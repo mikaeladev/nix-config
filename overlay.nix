@@ -141,6 +141,7 @@ in
     }
   ) { };
 
+  amethyst-mod-manager = inputs.amethyst-mod-manager.packages.${system}.default;
   pixel-cursors = inputs.pixel-cursors.packages.${system}.default;
   zen-browser = inputs.zen-browser.packages.${system}.default;
 }
