@@ -14,15 +14,15 @@ let
   mimeApps = withExtAttrs {
     aseprite = "aseprite";
     dolphin = "org.kde.dolphin";
+    gram = "app.liten.Gram";
     gwenview = "org.kde.gwenview";
     kwrite = "org.kde.kwrite";
-    zed-editor = "dev.zed.Zed";
     zen-browser = "zen-beta";
   };
 
   mimeAppsByFunction = rec {
     textEditor = [ mimeApps.kwrite ];
-    codeEditor = [ mimeApps.zed-editor ] ++ textEditor;
+    codeEditor = [ mimeApps.gram ] ++ textEditor;
     bitmapEditor = [ mimeApps.aseprite ];
     webBrowser = [ mimeApps.zen-browser ];
     fileBrowser = [ mimeApps.dolphin ] ++ codeEditor;
@@ -54,7 +54,7 @@ in
 
       associations.added = {
         "x-scheme-handler/discord" = withExt "vesktop";
-        "x-scheme-handler/zed" = mimeApps.zed-editor;
+        "x-scheme-handler/gram" = mimeApps.gram;
       };
 
       defaultApplications =
