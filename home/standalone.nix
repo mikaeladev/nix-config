@@ -54,6 +54,7 @@ in
     spicetify.enable = mkForce false; # conflicts with above
 
     gram.package = wrapVulkan pkgs.gram;
+    krita.package = wrapVulkan pkgs.krita;
     prismlauncher.package = wrapVulkan pkgs.prismlauncher;
     vesktop.package = wrapVulkan pkgs.vesktop;
     zed-editor.package = wrapVulkan pkgs.zed-editor;
