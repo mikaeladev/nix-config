@@ -153,6 +153,10 @@ in
           path = getExe pkgs.rust-analyzer;
           arguments = [ ];
         };
+        tombi.binary = {
+          path = getExe pkgs.tombi;
+          arguments = [ "lsp" ];
+        };
       };
     };
 
