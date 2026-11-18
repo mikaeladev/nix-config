@@ -187,6 +187,7 @@ in
       shfmt
 
       # language servers
+      bash-language-server
       nixd
       package-version-server
       shellcheck
